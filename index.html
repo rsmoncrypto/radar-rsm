@@ -250,6 +250,26 @@ h1 span{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--accent);
 .extras .ex{all:unset;cursor:pointer;font-size:13.5px;line-height:1.4;color:var(--fg)}
 .extras .ex b{color:var(--accent);font-weight:600;margin-right:4px}
 .recolh{display:block;width:100%;margin:14px 0 4px;padding:12px;border-radius:12px;border:1px dashed var(--line);background:none;color:var(--muted);font:inherit;font-size:14px;cursor:pointer}
+.est{background:var(--chip);border-radius:14px;padding:14px 14px 10px;margin:0 0 16px}
+.est-h{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.est-tese{font-size:15.5px;margin:0 0 8px}
+.est h4{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 0 4px}
+.est ul{padding-left:18px;margin:4px 0}.est li{margin:3px 0;font-size:14.5px}
+.est dl{margin:4px 0}.est dt{font-weight:600;font-size:14.5px;margin-top:6px}.est dd{margin:0;font-size:14px;color:var(--muted)}
+.est-ap li::marker{content:"→  ";color:var(--accent)}
+.est-alerta{background:#C2412D22;border-radius:8px;padding:7px 10px;font-size:13.5px;margin:6px 0}
+.fn{display:inline-block;min-width:18px;font-size:11px;font-weight:700;text-align:center;border-radius:6px;background:var(--accent-soft);color:var(--accent);text-decoration:none;margin-left:3px;padding:0 4px}
+.est-graf{display:flex;flex-direction:column;gap:6px;margin:6px 0}
+.est-graf .gl{display:grid;grid-template-columns:minmax(80px,40%) 1fr auto;gap:8px;align-items:center;font-size:13px}
+.est-graf .b{height:12px;background:var(--line);border-radius:6px;overflow:hidden}.est-graf .b i{display:block;height:100%;background:var(--accent)}
+.est-graf .v{font-weight:600;font-variant-numeric:tabular-nums}
+.est-q{background:var(--bg);border-radius:10px;padding:9px 11px;margin:6px 0;font-size:14px}.est-q b{display:block;margin-bottom:3px}
+.est-perg{display:flex;flex-direction:column;gap:6px;margin:12px 0 8px}
+.est-sug{all:unset;cursor:pointer;font-size:13.5px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--bg)}
+.est-form{display:flex;gap:8px}.est-form input{flex:1;min-width:0;font:inherit;font-size:15px;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--bg);color:var(--fg)}
+.est-form button{font:inherit;font-weight:600;border:0;border-radius:10px;padding:0 14px;background:var(--accent);color:var(--bg)}
+.est-esp{font-size:13.5px;color:var(--accent);margin:8px 0}
+.est-fontes{margin-top:10px;font-size:13px}.est-fontes summary{color:var(--muted);cursor:pointer}.est-fontes div{margin:4px 0}.est-fontes a{color:var(--fg)}
 </style>
 </head>
 <body>
@@ -303,7 +323,7 @@ h1 span{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--accent);
 </section>
 
 <script>
-const VERSAO = "135209489b";
+const VERSAO = "088ea01a08";
 /* se existir versão nova do app publicada, recarrega sem usar a cópia guardada */
 async function confereVersao(){
   try{const r=await fetch("versao.txt?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const v=(await r.text()).trim();
@@ -564,7 +584,7 @@ function render(){
     if(!ehLista()){const d=dia(i.quando);if(d!==ult){h+=`<div class="day">${d}</div>`;ult=d}}
     const s=!ehLista()&&seen.has(i.id);
     h+=`<div class="li${s?" seen":""}" data-id="${esc(i.id)}"><div class="fundo"><span class="sim">${s?"↺ Voltar para não visto":ICON_UP+" Me informei"}</span><span class="nao">Não me interessa ${ICON_DOWN}</span></div><div class="row"><button class="it" data-id="${esc(i.id)}">
-      <div><div class="m">${s||ehLista()?"":'<span class="dot" aria-label="novo"></span>'}${ehNoticia(i)?'<span class="src">notícia</span>':""}${(i.vid&&RESUMOS.has(i.vid))||(!i.vid&&i.nr)?'<span class="tag-res">resumo</span>':i.vid&&fila.has(i.vid)?'<span class="tag-res and">resumindo…</span>':""}<span class="who">${esc(i.nome)}${i.outras?` <span class="mais">+${i.outras.length}</span>`:""}</span><span>· ${esc(i.tipo)}${i.dur>0?" de "+tempo(i.dur):i.dur===-1?" ao vivo":""} · ${quando(i.quando)}</span></div>
+      <div><div class="m">${s||ehLista()?"":'<span class="dot" aria-label="novo"></span>'}${ehNoticia(i)?'<span class="src">notícia</span>':""}${modo==="estudar"?(ESTUDO[i.id]?'<span class="tag-res">aprofundado</span>':'<span class="tag-res and">aprofundando…</span>'):""}${(i.vid&&RESUMOS.has(i.vid))||(!i.vid&&i.nr)?'<span class="tag-res">resumo</span>':i.vid&&fila.has(i.vid)?'<span class="tag-res and">resumindo…</span>':""}<span class="who">${esc(i.nome)}${i.outras?` <span class="mais">+${i.outras.length}</span>`:""}</span><span>· ${esc(i.tipo)}${i.dur>0?" de "+tempo(i.dur):i.dur===-1?" ao vivo":""} · ${quando(i.quando)}</span></div>
       ${comp.has(i.id)?`<div class="rep">↺ Você já viu: <b>${esc((AS()[i.as]||{}).t||"")}</b><span>Novidade: ${esc(i.nov)}</span></div>`:""}<h3>${esc(i.titulo)}</h3>${i.texto?`<p>${esc(i.texto)}</p>`:""}${ehLista()&&i.salvoEm?`<div class="salvo-em">guardado em ${new Date(i.salvoEm).toLocaleDateString("pt-BR",{day:"numeric",month:"short"})}</div>`:""}</div>
       ${i.img&&i.img.startsWith("http")?`<span class="thumb"><img src="${esc(i.img)}" alt="" loading="lazy"><b>${i.dur?(i.tipo==="Short"?"Short · ":"")+tempo(i.dur):"▶ "+(i.tipo==="Short"?"Short":i.tipo==="Live"?"Live":"")}</b></span>`:""}</button>
       <div class="acts">${["depois","estudar"].map(l=>`<button class="sav ${l}" data-l="${l}" data-id="${esc(i.id)}" aria-pressed="${tem(l,i.id)}" aria-label="${tem(l,i.id)?"Tirar de "+NOME_L[l]:NOME_L[l]}" title="${NOME_L[l]}">${ICON[l]}</button>`).join("")}<span class="esp"></span>${ehLista()?"":`<button class="voto ruim" data-v="nao" data-id="${esc(i.id)}" aria-pressed="${naoSet.has(i.id)}" aria-label="Não me interessa" title="Não me interessa">${ICON_DOWN}</button><button class="voto bom" data-v="sim" data-id="${esc(i.id)}" aria-pressed="${s&&!naoSet.has(i.id)}" aria-label="Me informei" title="Me informei">${ICON_UP}</button>`}</div>${(extras.get(i.id)||[]).length?`<div class="extras"><span>Também sobre isso:</span>${extras.get(i.id).map(x=>`<button class="ex" data-id="${esc(x.id)}"><b>${esc(x.nome)}</b> ${esc(x.nov||x.fato||x.titulo)}</button>`).join("")}</div>`:""}</div></div>`;
@@ -612,6 +632,44 @@ const votosHTML=i=>`<div class="votos"><button class="vt ruim" data-v="nao" aria
 /* itens abertos nesta visita: ficam na lista (apagados) até trocar de filtro ou sair do app */
 let fica=new Set(), saiuEm=0;
 const limpaFica=()=>fica.clear();
+/* Estudar: dossiê da IA (radar_estudar.py) — estudar/index.json = {id do item: chave} */
+let ESTUDO={};
+async function carregaEstudo(){try{const r=await fetch("estudar/index.json?t="+Date.now(),{cache:"no-store"});if(r.ok){const n=await r.json();const mudou=JSON.stringify(n)!==JSON.stringify(ESTUDO);ESTUDO=n;if(mudou&&modo==="estudar")render()}}catch(e){}}
+async function leEstudo(k){const r=await fetch(`estudar/${k}.json?t=${Date.now()}`,{cache:"no-store"});return r.ok?await dec(r):null}
+function htmlEstudo(d){
+  const F=d.fontes||[];const fonte=n=>{const f=F.find(x=>x.n===n);return f?`<a href="${esc(f.url)}" target="_blank" rel="noopener" class="fn">${n}</a>`:""};
+  const cita=t=>esc(t).replace(/\[(\d+)\]/g,(m,n)=>fonte(+n)||m);
+  const g=d.grafico&&d.grafico.itens&&d.grafico.itens.length?d.grafico:null;const gmax=g?Math.max(...g.itens.map(x=>+x.valor||0)):0;
+  const nf=v=>(+v).toLocaleString("pt-BR",{maximumFractionDigits:2});
+  return `<div class="est">
+   <div class="est-h">Aprofundamento da IA</div>
+   ${d.tese?`<p class="est-tese">${esc(d.tese)}</p>`:""}
+   ${d.alerta?`<div class="est-alerta">⚠ ${esc(d.alerta)}</div>`:""}
+   ${(d.conceitos||[]).length?`<h4>Conceitos</h4><dl>${d.conceitos.map(c=>`<dt>${esc(c.termo)}</dt><dd>${esc(c.explicacao)}</dd>`).join("")}</dl>`:""}
+   ${(d.evidencias||[]).length?`<h4>O que as fontes dizem</h4><ul>${d.evidencias.map(e=>`<li>${esc(e.ponto)} ${(e.fontes||[]).map(fonte).join("")}</li>`).join("")}</ul>`:""}
+   ${g?`<h4>${esc(g.titulo||"Números")}</h4><div class="est-graf">${g.itens.map(x=>`<div class="gl"><span class="r">${esc(x.rotulo)}</span><span class="b"><i style="width:${gmax?Math.max(3,Math.round(100*(+x.valor||0)/gmax)):0}%"></i></span><span class="v">${nf(x.valor)}${g.unidade&&g.unidade.length<4?" "+esc(g.unidade):""}</span></div>`).join("")}</div>${g.unidade&&g.unidade.length>=4?`<p class="mut" style="font-size:12px">${esc(g.unidade)}</p>`:""}`:""}
+   ${(d.insights||[]).length?`<h4>Insights</h4><ul>${d.insights.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}
+   ${(d.aplicar||[]).length?`<h4>Como aplicar</h4><ul class="est-ap">${d.aplicar.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}
+   ${(d.leituras||[]).length?`<h4>Para ler</h4><ul>${d.leituras.map(l=>{const f=F.find(x=>x.n===l.fonte);return f?`<li><a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.titulo)}</a> — ${esc(l.por_que||"")}</li>`:""}).join("")}</ul>`:""}
+   ${(d.conversa||[]).length?`<h4>Suas perguntas</h4>${d.conversa.map(c=>`<div class="est-q"><b>${esc(c.p)}</b><div>${cita(c.r).replace(/\n/g,"<br>")}</div></div>`).join("")}`:""}
+   <div class="est-perg">${(d.perguntas||[]).map(p=>`<button class="est-sug">${esc(p)}</button>`).join("")}</div>
+   <form class="est-form" id="est-form"><input id="est-in" placeholder="Pergunte algo sobre isso…" autocomplete="off"><button>Perguntar</button></form>
+   <div class="est-esp" id="est-esp" hidden>Pensando<span class="pts"></span></div>
+   ${F.length?`<details class="est-fontes"><summary>${F.length} fontes</summary>${F.map(f=>`<div><span class="fn">${f.n}</span> <a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.titulo)}</a></div>`).join("")}</details>`:""}
+   <p class="rodape">Feito por IA (${esc(d.modelo||"Gemini")}) com busca na web. Pode conter erros: confira nas fontes.</p></div>`}
+async function mostraEstudo(i){
+  const el=$("estudo");if(!el)return;const k=ESTUDO[i.id];
+  if(!k){el.innerHTML=`<div class="est"><div class="est-h">Aprofundamento da IA</div><p class="mut">A IA está pesquisando e montando o aprofundamento deste item. Leva alguns minutos; volte daqui a pouco.</p></div>`;return}
+  try{const d=await leEstudo(k);if(d&&abertoId===i.id){el.innerHTML=htmlEstudo(d);el.dataset.k=k;el.dataset.n=(d.conversa||[]).length}}catch(e){}
+}
+async function perguntaEstudo(p){
+  const el=$("estudo");if(!el||!el.dataset.k||!p.trim())return;const k=el.dataset.k,n0=+el.dataset.n||0,id=abertoId;
+  ev("estudar_pergunta",id);$("est-esp").hidden=false;$("est-in").value="";
+  try{await fetch("https://ntfy.sh/"+TOPICO+"-q",{method:"POST",body:JSON.stringify({k,p:p.slice(0,500)})})}catch(e){}
+  for(let t=0;t<40;t++){await new Promise(r=>setTimeout(r,6000));if(abertoId!==id)return;
+    try{const d=await leEstudo(k);if(d&&(d.conversa||[]).length>n0){el.innerHTML=htmlEstudo(d);el.dataset.k=k;el.dataset.n=d.conversa.length;el.querySelector(".est-q:last-of-type")?.scrollIntoView({behavior:"smooth",block:"center"});return}}catch(e){}}
+  const esp=$("est-esp");if(esp)esp.textContent="O Mac não respondeu ainda. Tente de novo em alguns minutos.";
+}
 async function carregaIndice(){try{const r=await fetch("resumos/index.json?t="+Date.now(),{cache:"no-store"});if(r.ok){const n=new Set(await r.json());const mudou=n.size!==RESUMOS.size||[...n].some(v=>!RESUMOS.has(v));RESUMOS=n;if(mudou)render()}}catch(e){}}
 function seg(t){const p=String(t).split(":").map(Number);return p.reduce((a,b)=>a*60+b,0)}
 function htmlResumo(d){
@@ -695,6 +753,7 @@ async function vigiaFila(){
 $("sh-corpo").addEventListener("click",e=>{
   const bl=e.target.closest(".acoes .lista");
   if(bl){const i=itemAberto();if(!i)return;const l=bl.dataset.l;tem(l,i.id)?dessalvar(l,i.id):salvar(l,i);bl.setAttribute("aria-pressed",tem(l,i.id));return}
+  const sg=e.target.closest(".est-sug");if(sg){perguntaEstudo(sg.textContent);return}
   const vt=e.target.closest(".votos .vt");
   if(vt){const i=itemAberto();if(!i)return;const id=i.id;
     if(vt.dataset.v==="sim"){if(simSet.has(id)&&!naoSet.has(id)){simSet.delete(id);ev("desfez",id)}else{simSet.add(id);if(naoSet.delete(id))guardaNao();ev("bom",id)}guardaSim()}
@@ -708,6 +767,7 @@ $("sh-corpo").addEventListener("click",e=>{
 let player=null, abertoId=null, velEscolhida=1;
 try{velEscolhida=parseFloat(localStorage.getItem("radar-vel"))||1}catch(e){}
 function setVel(v){try{player&&player.setPlaybackRate&&player.setPlaybackRate(v)}catch(e){}}
+$("sh-corpo").addEventListener("submit",e=>{if(e.target.id==="est-form"){e.preventDefault();perguntaEstudo($("est-in").value)}});
 $("sh-corpo").addEventListener("scroll",()=>{const c=$("sh-corpo");if(c.scrollHeight>c.clientHeight)maxSc=Math.max(maxSc,(c.scrollTop+c.clientHeight)/c.scrollHeight)},{passive:true});
 $("sh-corpo").addEventListener("click",e=>{const b=e.target.closest("#vel button[data-v]");if(!b)return;velEscolhida=parseFloat(b.dataset.v);ev("vel",abertoId,{v:velEscolhida});try{localStorage.setItem("radar-vel",velEscolhida)}catch(x){}
   document.querySelectorAll("#vel button[data-v]").forEach(x=>x.setAttribute("aria-pressed",x===b));setVel(velEscolhida)});
@@ -742,7 +802,9 @@ function abrir(i){
       <div class="acoes"><a class="pri" href="${esc(i.url)}" target="_blank" rel="noopener">${ehNoticia(i)?"Ler a matéria completa":"Abrir o original"}</a><button class="sec lista" data-l="depois" aria-pressed="${tem("depois",i.id)}">${ICON.depois}Ver depois</button><button class="sec lista" data-l="estudar" aria-pressed="${tem("estudar",i.id)}">${ICON.estudar}Estudar</button></div>
       ${votosHTML(i)}`;
   }
+  if(tem("estudar",i.id))c=`<div id="estudo"></div>`+c;
   $("sh-corpo").innerHTML=c; $("sh-corpo").scrollTop=0;
+  if(tem("estudar",i.id))mostraEstudo(i);
   $("scrim").hidden=false;$("sheet").hidden=false;document.body.classList.add("travado");
   requestAnimationFrame(()=>{$("scrim").classList.add("on");$("sheet").classList.add("on")});
   if(i.vid){tocar(i,!RESUMOS.has(i.vid));mostraResumo(i)}else mostraNoticia(i);
@@ -843,7 +905,7 @@ async function carregar(){
   }
 }
 let atualizando=false, pontos=null;
-let nRes=0;setInterval(()=>{nRes=(nRes+1)%4;document.querySelectorAll(".btn-res .pts").forEach(e=>e.textContent=".".repeat(nRes))},500);
+let nRes=0;setInterval(()=>{nRes=(nRes+1)%4;document.querySelectorAll(".pts").forEach(e=>e.textContent=".".repeat(nRes))},500);
 $("ref").addEventListener("click",async()=>{
   if(atualizando)return;
   atualizando=true;$("ref").classList.add("girando");limpaFica();render();
@@ -865,8 +927,8 @@ let ultimaCarga=Date.now();
 let sessIni=Date.now();ev("app");
 document.addEventListener("visibilitychange",()=>{if(document.hidden){saiuEm=Date.now();ev("sai",null,{s:Math.round((Date.now()-sessIni)/1000)});if(abertoId)registraFecho();enviaEv();return}
   sessIni=Date.now();ev("app");confereVersao();carregaIndice();if(saiuEm&&Date.now()-saiuEm>10*60000){limpaFica();render()}vigiaFila();sincroniza();if(Date.now()-ultimaCarga>3*60000){ultimaCarga=Date.now();carregar()}});
-confereVersao();carregar().then(sincroniza);carregaIndice();vigiaFila();
-setInterval(()=>{if(!document.hidden)carregaIndice()},90000);
+confereVersao();carregar().then(sincroniza);carregaIndice();carregaEstudo();vigiaFila();
+setInterval(()=>{if(!document.hidden){carregaIndice();carregaEstudo()}},90000);
 </script>
 </body>
 </html>
