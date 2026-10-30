@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Pré-resumo · Radar RSM</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{--bg:#FCFCFB;--fg:#1A1F1D;--muted:#6F7874;--faint:#A3ABA7;--line:#ECEFED;--accent:#0F7A63;--accent-soft:#E6F3EF;--chip:#F2F4F3;--warn:#B4570F;
+--body:"Instrument Sans",-apple-system,"Segoe UI",system-ui,sans-serif;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#1B201E;--fg:#C9D1CD;--muted:#909B96;--faint:#66716C;--line:#2A322F;--accent:#62C2A8;--accent-soft:#1F3A33;--chip:#242B28;--warn:#F0A060;color-scheme:dark}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.45;-webkit-text-size-adjust:100%;padding:0 16px calc(120px + env(safe-area-inset-bottom))}
+header{padding:calc(18px + env(safe-area-inset-top)) 0 6px}
+h1{font-size:22px;margin:0 0 6px;letter-spacing:-.01em}
+.intro{color:var(--muted);font-size:14px;margin:0 0 6px}
+.tema{margin-top:22px}
+.th{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:0 0 8px;border-bottom:1px solid var(--line)}
+.th h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0;font-weight:700}
+.th button{font:inherit;font-size:13px;color:var(--accent);background:none;border:0;padding:6px 0 6px 12px;cursor:pointer;font-weight:600}
+label.c{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
+label.c input{position:absolute;opacity:0;pointer-events:none}
+.bx{flex:none;width:26px;height:26px;border-radius:8px;border:2px solid var(--faint);display:grid;place-items:center;transition:.15s}
+.bx svg{width:15px;height:15px;opacity:0;color:#fff}
+input:checked+.bx{background:var(--accent);border-color:var(--accent)}
+input:checked+.bx svg{opacity:1}
+@media (prefers-color-scheme:dark){.bx svg{color:#0D1F1A}}
+.nm{flex:1;min-width:0}
+.nm b{display:block;font-weight:600}
+.nm span{font-size:13px;color:var(--muted)}
+.nm span.zero{color:var(--faint)}
+.hs{flex:none;font-variant-numeric:tabular-nums;font-size:14px;color:var(--muted);text-align:right;min-width:52px}
+footer{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:12px}
+.tot{flex:1;min-width:0;font-size:14px;line-height:1.3}
+.tot b{font-size:16px}
+.tot .lim{display:block;color:var(--muted);font-size:12.5px}
+.tot .lim.alto{color:var(--warn)}
+#env{flex:none;font:inherit;font-weight:700;font-size:15px;border:0;border-radius:14px;padding:14px 18px;background:var(--accent);color:var(--bg);cursor:pointer}
+#env:disabled{opacity:.45}
+.ok{background:var(--accent-soft);color:var(--accent);border-radius:12px;padding:12px 14px;margin:14px 0 0;font-size:14px}
+</style></head><body>
+<header>
+<h1>Pré-resumo de vídeos</h1>
+<p class="intro">Marque os canais que o Mac deve resumir sozinho assim que um vídeo novo chegar. Shorts e lives longas ficam de fora. Os números são da última semana: vídeos longos e horas somadas.</p>
+<div id="ok" class="ok" hidden></div>
+</header>
+<main id="lista"></main>
+<footer><div class="tot"><b id="n">0 canais</b> · <span id="h">0 h/dia</span><span class="lim" id="lim">Plano gratuito: até cerca de 8 h por dia</span></div><button id="env" disabled>Enviar ao Mac</button></footer>
+<script>
+const TOPICO="radar-rsm-120cf1e02de4f9d7";
+const C=[{"p": "canalbitnada", "n": "Bitnada", "t": "Cripto", "v": 9, "h": 5.9, "sh": 2, "lv": 0}, {"p": "paradigma.education", "n": "Paradigma", "t": "Cripto", "v": 5, "h": 3.7, "sh": 0, "lv": 0}, {"p": "oranjebtc", "n": "OranjeBTC", "t": "Cripto", "v": 1, "h": 0.1, "sh": 0, "lv": 0}, {"p": "augustobackes", "n": "Augusto Backes", "t": "Cripto", "v": 5, "h": 1.8, "sh": 0, "lv": 0}, {"p": "evandro_pit", "n": "Evandro Pit", "t": "Cripto", "v": 4, "h": 2.1, "sh": 0, "lv": 0}, {"p": "caiovicentino", "n": "Caio Vicentino", "t": "Cripto", "v": 4, "h": 4.4, "sh": 0, "lv": 0}, {"p": "bruno_perini", "n": "Bruno Perini", "t": "Finanças", "v": 3, "h": 2.0, "sh": 7, "lv": 0}, {"p": "marcosaravalle", "n": "Marco Saravalle", "t": "Finanças", "v": 2, "h": 1.2, "sh": 3, "lv": 0}, {"p": "ulrich.fernando", "n": "Fernando Ulrich", "t": "Finanças", "v": 3, "h": 1.4, "sh": 2, "lv": 0}, {"p": "geracaodevalor", "n": "Flávio Augusto", "t": "Negócios", "v": 0, "h": 0.0, "sh": 0, "lv": 0}, {"p": "eduardocavalcanti", "n": "Eduardo Cavalcanti", "t": "IA e tecnologia", "v": 2, "h": 0.8, "sh": 3, "lv": 0}, {"p": "jornadatop", "n": "Jornada Top", "t": "IA e tecnologia", "v": 0, "h": 0.0, "sh": 6, "lv": 0}, {"p": "eslen.delanogare", "n": "Eslen Delanogare", "t": "Saúde e ciência", "v": 1, "h": 0.2, "sh": 0, "lv": 0}, {"p": "leo_costa_pbe", "n": "Leo Costa (PBE)", "t": "Saúde e ciência", "v": 0, "h": 0.0, "sh": 0, "lv": 1}, {"p": "santiagopaesphd", "n": "Dr. Santiago Paes", "t": "Saúde e ciência", "v": 4, "h": 0.7, "sh": 2, "lv": 0}, {"p": "microbiologia.pratica", "n": "Microbiologia Prática", "t": "Saúde e ciência", "v": 0, "h": 0.0, "sh": 0, "lv": 0}, {"p": "spacetoday", "n": "Space Today", "t": "Saúde e ciência", "v": 5, "h": 1.1, "sh": 1, "lv": 0}, {"p": "professorhoc", "n": "Professor HOC", "t": "Mundo", "v": 2, "h": 0.6, "sh": 2, "lv": 0}, {"p": "eletricarbr", "n": "Eletricar", "t": "Carros elétricos", "v": 0, "h": 0.0, "sh": 10, "lv": 0}, {"p": "victorpicolli", "n": "Top Drive (Victor Picolli)", "t": "Carros elétricos", "v": 3, "h": 0.7, "sh": 3, "lv": 0}, {"p": "cazetv", "n": "CazéTV", "t": "Esportes", "v": 4, "h": 2.0, "sh": 0, "lv": 3}, {"p": "espnbrasil", "n": "ESPN Brasil", "t": "Esportes", "v": 15, "h": 8.1, "sh": 18, "lv": 2}, {"p": "nflbrasil", "n": "NFL Brasil", "t": "Esportes", "v": 5, "h": 2.0, "sh": 2, "lv": 0}, {"p": "nbabrasil", "n": "NBA Brasil", "t": "Esportes", "v": 6, "h": 1.2, "sh": 2, "lv": 0}, {"p": "rennoguil", "n": "Criptomaníacos", "t": "Cripto", "v": 2, "h": 0.5, "sh": 0, "lv": 0}, {"p": "danielabouttech", "n": "Daniel About Tech", "t": "IA e tecnologia", "v": 3, "h": 1.0, "sh": 3, "lv": 0}, {"p": "fabio.poe", "n": "Fábio Poe", "t": "IA e tecnologia", "v": 0, "h": 0.0, "sh": 2, "lv": 0}, {"p": "goatbr", "n": "GOAT Br", "t": "Esportes", "v": 0, "h": 0.0, "sh": 0, "lv": 0}, {"p": "findocs", "n": "FinDocs", "t": "Cripto", "v": 0, "h": 0.0, "sh": 0, "lv": 0}, {"p": "area.bitcoin", "n": "Area Bitcoin", "t": "Cripto", "v": 1, "h": 0.1, "sh": 4, "lv": 0}, {"p": "declarandobitcoin", "n": "Declarando Bitcoin", "t": "Cripto", "v": 0, "h": 0.0, "sh": 1, "lv": 0}, {"p": "gustavocerbasi", "n": "Gustavo Cerbasi", "t": "Finanças", "v": 2, "h": 0.1, "sh": 0, "lv": 0}, {"p": "louise.barsi", "n": "AGF (Louise Barsi)", "t": "Finanças", "v": 7, "h": 5.4, "sh": 3, "lv": 0}, {"p": "oalanicolas", "n": "Alan Nicolas", "t": "IA e tecnologia", "v": 3, "h": 1.5, "sh": 0, "lv": 0}, {"p": "danieltechonday", "n": "Daniel Tech On Day", "t": "IA e tecnologia", "v": 0, "h": 0.0, "sh": 2, "lv": 0}, {"p": "canaltech", "n": "Canaltech", "t": "IA e tecnologia", "v": 4, "h": 1.4, "sh": 5, "lv": 1}, {"p": "jonylan", "n": "Jony Lan", "t": "IA e tecnologia", "v": 1, "h": 0.1, "sh": 2, "lv": 0}, {"p": "diariodocarroeletrico", "n": "Diário do Carro Elétrico", "t": "Carros elétricos", "v": 0, "h": 0.0, "sh": 0, "lv": 0}, {"p": "janacletos", "n": "A Roda (João Anacleto)", "t": "Carros elétricos", "v": 3, "h": 3.0, "sh": 1, "lv": 0}, {"p": "lucas.faccina", "n": "Lucas Faccina", "t": "Carros elétricos", "v": 0, "h": 0.0, "sh": 4, "lv": 0}, {"p": "reservatoriodedopamina", "n": "Reservatório de Dopamina", "t": "Saúde e ciência", "v": 2, "h": 0.4, "sh": 0, "lv": 0}, {"p": "paulomuzy", "n": "Paulo Muzy", "t": "Saúde e ciência", "v": 3, "h": 1.1, "sh": 4, "lv": 0}, {"p": "joeljota", "n": "Joel Jota", "t": "Negócios", "v": 2, "h": 1.8, "sh": 1, "lv": 0}, {"p": "clovisdebarros", "n": "Clóvis de Barros Filho", "t": "Filosofia", "v": 1, "h": 0.2, "sh": 2, "lv": 0}, {"p": "lucax.franco", "n": "Lucax Franco", "t": "Curiosidades", "v": 0, "h": 0.0, "sh": 4, "lv": 0}, {"p": "oriengbr", "n": "Orieng", "t": "Curiosidades", "v": 1, "h": 0.3, "sh": 0, "lv": 0}, {"p": "tanahistoria", "n": "Tá Na História", "t": "Curiosidades", "v": 0, "h": 0.0, "sh": 3, "lv": 0}, {"p": "orlandodiferente", "n": "Orlando Diferente", "t": "Viagem", "v": 1, "h": 0.3, "sh": 3, "lv": 0}, {"p": "pontospravoar", "n": "Pontos pra Voar", "t": "Viagem", "v": 1, "h": 0.1, "sh": 0, "lv": 0}, {"p": "nortonreveno", "n": "Norton Reveno", "t": "Viagem", "v": 0, "h": 0.0, "sh": 0, "lv": 0}, {"p": "ariaguiar", "n": "Ari Aguiar", "t": "Esportes", "v": 0, "h": 0.0, "sh": 0, "lv": 0}, {"p": "marcelomarttinss", "n": "Marcelo Marttins", "t": "IA e tecnologia", "v": 0, "h": 0.0, "sh": 0, "lv": 0}, {"p": "investidor4.20", "n": "Investidor 4.20", "t": "Cripto", "v": 0, "h": 0.0, "sh": 0, "lv": 0}, {"p": "lucianafpapini", "n": "Luciana Papini", "t": "IA e tecnologia", "v": 0, "h": 0.0, "sh": 0, "lv": 0}, {"p": "ossocios", "n": "Os Sócios Podcast", "t": "Finanças", "v": 0, "h": 0.0, "sh": 0, "lv": 0}, {"p": "programadorprimata", "n": "Primata Hub", "t": "IA e tecnologia", "v": 0, "h": 0.0, "sh": 0, "lv": 0}, {"p": "matematizei", "n": "Matematizei", "t": "Curiosidades", "v": 0, "h": 0.0, "sh": 0, "lv": 0}, {"p": "cienciatododia", "n": "Ciência Todo Dia", "t": "Saúde e ciência", "v": 0, "h": 0.0, "sh": 0, "lv": 0}, {"p": "peterattiamd", "n": "Peter Attia (em inglês, entregue em português)", "t": "Saúde e ciência", "v": 0, "h": 0.0, "sh": 0, "lv": 0}, {"p": "orafavoss", "n": "Rafa Voss", "t": "IA e tecnologia", "v": 0, "h": 0.0, "sh": 0, "lv": 0}, {"p": "g4podcasts", "n": "G4 Podcasts", "t": "Negócios", "v": 0, "h": 0.0, "sh": 0, "lv": 0}];
+const ck='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fh=h=>h>=1?String(h).replace(".",",")+" h":Math.round(h*60)+" min";
+const temas={};C.forEach(c=>(temas[c.t]=temas[c.t]||[]).push(c));
+const ordem=Object.keys(temas).sort((a,b)=>temas[b].reduce((s,c)=>s+c.h,0)-temas[a].reduce((s,c)=>s+c.h,0));
+let sel=new Set();
+function desc(c){
+  if(!c.v){const x=[];if(c.sh)x.push(c.sh+" Shorts");if(c.lv)x.push(c.lv+(c.lv>1?" lives":" live"));return `<span class="zero">Nenhum vídeo longo na semana${x.length?" · "+x.join(" · "):""}</span>`}
+  return `<span>${c.v} ${c.v>1?"vídeos":"vídeo"}${c.lv?" · "+c.lv+(c.lv>1?" lives (fora)":" live (fora)"):""}</span>`}
+function render(){
+  document.getElementById("lista").innerHTML=ordem.map(t=>{
+    const cs=temas[t].slice().sort((a,b)=>b.h-a.h||b.v-a.v);
+    const todos=cs.every(c=>sel.has(c.p));
+    return `<section class="tema"><div class="th"><h2>${esc(t)}</h2><button data-t="${esc(t)}">${todos?"Desmarcar":"Marcar"} todos</button></div>
+    ${cs.map(c=>`<label class="c"><input type="checkbox" data-p="${esc(c.p)}" ${sel.has(c.p)?"checked":""}><span class="bx">${ck}</span><span class="nm"><b>${esc(c.n)}</b>${desc(c)}</span><span class="hs">${c.h?fh(c.h):"—"}</span></label>`).join("")}</section>`}).join("");
+  tot()}
+function tot(){
+  const cs=C.filter(c=>sel.has(c.p)),h=cs.reduce((s,c)=>s+c.h,0)/7;
+  document.getElementById("n").textContent=cs.length+(cs.length===1?" canal":" canais");
+  document.getElementById("h").textContent="≈ "+(h>=1?h.toFixed(1).replace(".",",")+" h":Math.round(h*60)+" min")+" por dia";
+  const l=document.getElementById("lim");
+  l.className="lim"+(h>8?" alto":"");
+  l.textContent=h>8?"Passa do gratuito (≈8 h/dia): alguns ficam sob demanda":"Cabe no plano gratuito (≈8 h/dia)";
+  document.getElementById("env").disabled=false}
+document.getElementById("lista").addEventListener("change",e=>{const p=e.target.dataset.p;if(!p)return;e.target.checked?sel.add(p):sel.delete(p);render()});
+document.getElementById("lista").addEventListener("click",e=>{const b=e.target.closest("button[data-t]");if(!b)return;const cs=temas[b.dataset.t],todos=cs.every(c=>sel.has(c.p));cs.forEach(c=>todos?sel.delete(c.p):sel.add(c.p));render()});
+document.getElementById("env").addEventListener("click",async()=>{
+  const b=document.getElementById("env");b.disabled=true;b.textContent="Enviando…";
+  const nomes=C.filter(c=>sel.has(c.p)).map(c=>c.n);
+  try{const r=await fetch("https://ntfy.sh/"+TOPICO+"-p",{method:"POST",body:JSON.stringify({canais:[...sel]})});
+    if(!r.ok)throw 0;
+    b.textContent="Enviado";const ok=document.getElementById("ok");ok.hidden=false;
+    ok.textContent=`Escolha enviada: ${nomes.length} ${nomes.length===1?"canal":"canais"}. O Mac começa o pré-resumo na próxima coleta. Pode voltar aqui e mudar quando quiser.`;
+    window.scrollTo({top:0,behavior:"smooth"});setTimeout(()=>{b.textContent="Enviar ao Mac";b.disabled=false},3000)}
+  catch(e){b.textContent="Tentar de novo";b.disabled=false}});
+fetch("pre_resumo.json?"+Date.now()).then(r=>r.ok?r.json():null).then(d=>{if(d&&d.canais){sel=new Set(d.canais);render()}}).catch(()=>{});
+render();
+</script></body></html>
