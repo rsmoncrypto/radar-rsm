@@ -270,6 +270,12 @@ h1 span{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--accent);
 .est-form button{font:inherit;font-weight:600;border:0;border-radius:10px;padding:0 14px;background:var(--accent);color:var(--bg)}
 .est-esp{font-size:13.5px;color:var(--accent);margin:8px 0}
 .est-fontes{margin-top:10px;font-size:13px}.est-fontes summary{color:var(--muted);cursor:pointer}.est-fontes div{margin:4px 0}.est-fontes a{color:var(--fg)}
+.est-passos{padding-left:20px;margin:4px 0}.est-passos li{margin:6px 0;font-size:14.5px}.est-passos li span{display:block;color:var(--muted);font-size:14px}
+.est-tl{border-left:2px solid var(--accent);margin:6px 0 6px 6px;padding-left:12px;display:flex;flex-direction:column;gap:8px}
+.est-tl .tl{position:relative;font-size:14px}.est-tl .tl::before{content:"";position:absolute;left:-18px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.est-tl .q{display:block;font-weight:700;color:var(--accent);font-size:13px}
+.est-tab{width:100%;border-collapse:collapse;font-size:13px}.est-tab th,.est-tab td{border-bottom:1px solid var(--line);padding:6px 4px;text-align:left;vertical-align:top}.est-tab th{color:var(--muted);font-weight:600}
+.est-plano{display:flex;flex-direction:column;gap:8px;margin:6px 0}.est-plano .pl{background:var(--bg);border-radius:10px;padding:9px 11px;font-size:14px}.est-plano .pl span{display:block;color:var(--muted);font-size:13px;margin-top:2px}
 </style>
 </head>
 <body>
@@ -323,7 +329,7 @@ h1 span{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--accent);
 </section>
 
 <script>
-const VERSAO = "088ea01a08";
+const VERSAO = "7981fd049a";
 /* se existir versão nova do app publicada, recarrega sem usar a cópia guardada */
 async function confereVersao(){
   try{const r=await fetch("versao.txt?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const v=(await r.text()).trim();
@@ -636,7 +642,35 @@ const limpaFica=()=>fica.clear();
 let ESTUDO={};
 async function carregaEstudo(){try{const r=await fetch("estudar/index.json?t="+Date.now(),{cache:"no-store"});if(r.ok){const n=await r.json();const mudou=JSON.stringify(n)!==JSON.stringify(ESTUDO);ESTUDO=n;if(mudou&&modo==="estudar")render()}}catch(e){}}
 async function leEstudo(k){const r=await fetch(`estudar/${k}.json?t=${Date.now()}`,{cache:"no-store"});return r.ok?await dec(r):null}
+function htmlSecao(x,fonte,cita){
+  const T=x.titulo?`<h4>${esc(x.titulo)}</h4>`:"";const it=x.itens||[];
+  switch(x.tipo){
+    case "texto":return T+`<p>${cita(x.texto||"")}</p>`;
+    case "lista":return T+`<ul>${it.map(v=>`<li>${cita(v)}</li>`).join("")}</ul>`;
+    case "conceitos":return T+`<dl>${it.map(c=>`<dt>${esc(c.termo)}</dt><dd>${cita(c.explicacao||"")}</dd>`).join("")}</dl>`;
+    case "passos":return T+`<ol class="est-passos">${it.map(p=>`<li><b>${esc(p.titulo||"")}</b>${p.detalhe?`<span>${cita(p.detalhe)}</span>`:""}</li>`).join("")}</ol>`;
+    case "linha_do_tempo":return T+`<div class="est-tl">${it.map(e=>`<div class="tl"><span class="q">${esc(e.quando||"")}</span><span class="e">${cita(e.evento||"")}</span></div>`).join("")}</div>`;
+    case "tabela":return T+`<div class="tab-wrap"><table class="est-tab"><tr>${(x.colunas||[]).map(c=>`<th>${esc(c)}</th>`).join("")}</tr>${(x.linhas||[]).map(l=>`<tr>${l.map(c=>`<td>${cita(String(c))}</td>`).join("")}</tr>`).join("")}</table></div>`;
+    case "grafico":{const mx=Math.max(...it.map(v=>+v.valor||0));const nf=v=>(+v).toLocaleString("pt-BR",{maximumFractionDigits:2});
+      return T+`<div class="est-graf">${it.map(v=>`<div class="gl"><span class="r">${esc(v.rotulo)}</span><span class="b"><i style="width:${mx?Math.max(3,Math.round(100*(+v.valor||0)/mx)):0}%"></i></span><span class="v">${nf(v.valor)}</span></div>`).join("")}</div>${x.unidade?`<p class="mut" style="font-size:12px">${esc(x.unidade)}</p>`:""}`}
+    case "plano":return T+`<div class="est-plano">${it.map(a=>`<div class="pl"><b>→ ${cita(a.acao||"")}</b>${a.quando?`<span>Quando: ${esc(a.quando)}</span>`:""}${a.como_medir?`<span>Como medir: ${esc(a.como_medir)}</span>`:""}</div>`).join("")}</div>`;
+    default:return x.texto?T+`<p>${cita(x.texto)}</p>`:"";
+  }
+}
 function htmlEstudo(d){
+  if(d.secoes){
+    const F=d.fontes||[];const fonte=n=>{const f=F.find(x=>x.n===n);return f?`<a href="${esc(f.url)}" target="_blank" rel="noopener" class="fn">${n}</a>`:""};
+    const cita=t=>esc(t).replace(/\[(\d+)\]/g,(m,n)=>fonte(+n)||m);
+    return `<div class="est">
+     <div class="est-h">${esc(d.titulo||"Estudo")}</div>
+     ${d.resumo?`<p class="est-tese">${cita(d.resumo)}</p>`:""}
+     ${(d.secoes||[]).map(x=>htmlSecao(x,fonte,cita)).join("")}
+     ${(d.conversa||[]).length?`<h4>Suas perguntas</h4>${d.conversa.map(c=>`<div class="est-q"><b>${esc(c.p)}</b><div>${cita(c.r).replace(/\n/g,"<br>")}</div></div>`).join("")}`:""}
+     <div class="est-perg">${(d.perguntas||[]).map(p=>`<button class="est-sug">${esc(p)}</button>`).join("")}</div>
+     <form class="est-form" id="est-form"><input id="est-in" placeholder="Pergunte ou peça algo sobre isso…" autocomplete="off"><button>Perguntar</button></form>
+     <div class="est-esp" id="est-esp" hidden>Claude pensando<span class="pts"></span></div>
+     ${F.length?`<details class="est-fontes"><summary>${F.length} fontes</summary>${F.map(f=>`<div><span class="fn">${f.n}</span> <a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.titulo)}</a></div>`).join("")}</details>`:""}
+     <p class="rodape">Estudo feito pelo ${esc(d.modelo||"Claude")} com pesquisa na web.</p></div>`}
   const F=d.fontes||[];const fonte=n=>{const f=F.find(x=>x.n===n);return f?`<a href="${esc(f.url)}" target="_blank" rel="noopener" class="fn">${n}</a>`:""};
   const cita=t=>esc(t).replace(/\[(\d+)\]/g,(m,n)=>fonte(+n)||m);
   const g=d.grafico&&d.grafico.itens&&d.grafico.itens.length?d.grafico:null;const gmax=g?Math.max(...g.itens.map(x=>+x.valor||0)):0;
@@ -659,7 +693,7 @@ function htmlEstudo(d){
    <p class="rodape">Feito por IA (${esc(d.modelo||"Gemini")}) com busca na web. Pode conter erros: confira nas fontes.</p></div>`}
 async function mostraEstudo(i){
   const el=$("estudo");if(!el)return;const k=ESTUDO[i.id];
-  if(!k){el.innerHTML=`<div class="est"><div class="est-h">Aprofundamento da IA</div><p class="mut">A IA está pesquisando e montando o aprofundamento deste item. Leva alguns minutos; volte daqui a pouco.</p></div>`;return}
+  if(!k){el.innerHTML=`<div class="est"><div class="est-h">Aprofundamento da IA</div><p class="mut">O Claude está pesquisando e montando o estudo deste item. Leva alguns minutos; volte daqui a pouco.</p></div>`;return}
   try{const d=await leEstudo(k);if(d&&abertoId===i.id){el.innerHTML=htmlEstudo(d);el.dataset.k=k;el.dataset.n=(d.conversa||[]).length}}catch(e){}
 }
 async function perguntaEstudo(p){
