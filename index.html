@@ -346,7 +346,7 @@ h1 span{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--accent);
 </section>
 
 <script>
-const VERSAO = "7dfa9f4fff";
+const VERSAO = "a60ce27268";
 /* se existir versão nova do app publicada, recarrega sem usar a cópia guardada */
 async function confereVersao(){
   try{const r=await fetch("versao.txt?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const v=(await r.text()).trim();
@@ -587,7 +587,7 @@ function lista(){
   if(ehLista()){
     const atual=new Map(DATA.itens.map(i=>[i.id,i]));
     const est=modo==="estudar",ord=i=>i.est_cat?"0"+estLab(i):"1";
-    return [...salvos.values()].filter(o=>o.lista===modo).map(o=>({...(atual.get(o.id)||{}),...o,salvoEm:o.salvoEm}))
+    return [...salvos.values()].filter(o=>o.lista===modo).map(o=>({...o,...(atual.get(o.id)||{}),salvoEm:o.salvoEm}))
       .filter(i=>fmt==="tudo"||fmt==="novos"?(fmt!=="novos"||!seen.has(i.id)):i.formato===fmt)
       .filter(i=>!est||estCat==="Todos"||(estCat==="Sem categoria"?!i.est_cat:i.est_cat===estCat&&(estSub==="Todos"||i.est_sub===estSub)))
       .sort((a,b)=>(est?ord(a).localeCompare(ord(b)):0)||(b.salvoEm||"").localeCompare(a.salvoEm||""));
