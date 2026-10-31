@@ -277,6 +277,9 @@ h1 span{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--accent);
 .est-tab{width:100%;border-collapse:collapse;font-size:13px}.est-tab th,.est-tab td{border-bottom:1px solid var(--line);padding:6px 4px;text-align:left;vertical-align:top}.est-tab th{color:var(--muted);font-weight:600}
 .est-plano{display:flex;flex-direction:column;gap:8px;margin:6px 0}.est-plano .pl{background:var(--bg);border-radius:10px;padding:9px 11px;font-size:14px}.est-plano .pl span{display:block;color:var(--muted);font-size:13px;margin-top:2px}
 .md-li{padding-left:.9em;text-indent:-.9em;margin:.15em 0}.md-h{display:inline-block;margin-top:.4em}
+.tema-card{display:block;width:100%;text-align:left;border:0;border-radius:14px;padding:13px 14px;margin:10px 0 6px;background:var(--accent-soft);color:var(--fg);font:inherit}
+.tema-card b{display:block;color:var(--accent);font-size:15px;margin-bottom:3px}.tema-card span{font-size:13.5px;color:var(--muted)}
+.tema-est{display:flex;flex-direction:column;gap:6px;margin:4px 0 12px}.tema-est button{text-align:left;border:0;background:var(--chip);color:var(--fg);border-radius:10px;padding:9px 11px;font:inherit;font-size:14px}
 .em-fundo{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:flex;align-items:flex-end;justify-content:center}
 .em{background:var(--bg);color:var(--fg);width:100%;max-width:560px;box-sizing:border-box;border-radius:18px 18px 0 0;padding:18px 16px calc(16px + env(safe-area-inset-bottom));max-height:92vh;overflow:auto}
 .em h3{margin:0 0 4px;font-size:17px}.em .mut{color:var(--muted);font-size:13px;margin:0 0 6px}
@@ -346,7 +349,7 @@ h1 span{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--accent);
 </section>
 
 <script>
-const VERSAO = "a60ce27268";
+const VERSAO = "e0dc3504f0";
 /* se existir versão nova do app publicada, recarrega sem usar a cópia guardada */
 async function confereVersao(){
   try{const r=await fetch("versao.txt?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const v=(await r.text()).trim();
@@ -447,6 +450,14 @@ function abreEnvioEstudo(i,edita){
     else{salvar("estudar",i,extra);if(abertoId===i.id)document.querySelectorAll('.acoes .lista[data-l="estudar"]').forEach(b=>b.setAttribute("aria-pressed","true"));
       toast(`<span>Enviado para Estudar${cat?" · "+esc(estLab(extra)):""}. O Claude começa em alguns minutos.</span><button class="fx" aria-label="Fechar">×</button>`)}
   });
+}
+async function abrirTema(rot){
+  const k=ESTUDO["tema:"+rot];if(!k)return;abertoId="tema:"+rot;abertoEm=Date.now();assistiu=0;maxSc=0;durAberto=0;ev("tema_abriu",abertoId);
+  $("sh-who").innerHTML=`<b>Espaço do tema</b> · ${esc(rot)}`;$("sh-corpo").innerHTML=`<div id="estudo"><p class="mut">Carregando…</p></div>`;$("sh-corpo").scrollTop=0;
+  $("scrim").hidden=false;$("sheet").hidden=false;document.body.classList.add("travado");requestAnimationFrame(()=>{$("scrim").classList.add("on");$("sheet").classList.add("on")});
+  try{const d=await leEstudo(k);const el=$("estudo");if(!d||!el||abertoId!=="tema:"+rot)return;
+    const lst=(d.estudos||[]).map((e,n)=>`<button class="tema-ir" data-id="${esc(e.id)}">Estudo ${n+1} · ${esc(e.titulo)}</button>`).join("");
+    el.innerHTML=htmlEstudo(d).replace('<div class="est-h">',`<div class="est-h">`)+`<h4 class="mut">Estudos deste tema</h4><div class="tema-est">${lst}</div>`;el.dataset.k=k;el.dataset.n=(d.conversa||[]).length}catch(e){}
 }
 function dessalvar(l,id){ev("tirou_"+l,id);const k=chaveL(l,id);salvos.delete(k);pend.push({u:[k]});cache();envia();render()}
 let enviando=false;
@@ -661,6 +672,9 @@ function render(){
   }
   setTimeout(observa,0);
   if(recolhidos.length&&!ehLista())h+=`<button class="recolh" id="recolh">${verRecolhidos?"Esconder":"↺ "+recolhidos.length+(recolhidos.length===1?" item":" itens")+" sobre assuntos que você já viu, sem novidade"}</button>`;
+  if(modo==="estudar"&&estCat!=="Todos"&&estCat!=="Sem categoria"){const rot=estSub==="Todos"?estCat:estCat+" › "+estSub,k=ESTUDO["tema:"+rot]||ESTUDO["tema:"+estCat];
+    const n=[...salvos.values()].filter(o=>o.lista==="estudar"&&o.intencao&&o.est_cat===estCat&&(estSub==="Todos"||o.est_sub===estSub)).length;
+    h=`<button class="tema-card" data-tema="${esc(ESTUDO["tema:"+rot]?rot:estCat)}"><b>Espaço do tema · ${esc(rot)}</b><span>${k?"O Claude cruza os estudos daqui: o que você já aprendeu, debates, lacunas e um plano único. Toque para abrir e conversar.":n<2?"Nasce quando houver 2 estudos com objetivo aqui. Aí o Claude cruza tudo num lugar só.":"O Claude está montando o espaço deste tema. Volte em alguns minutos."}</span></button>`+h}
   $("feed").innerHTML=h||(modo==="depois"?`<div class="msg"><strong>Nada em Ver depois</strong>Toque no relógio ao lado de qualquer item para guardar e ver com calma. Não conta como visto e não some depois de 7 dias.</div>`:modo==="estudar"?`<div class="msg"><strong>Nada em Estudar</strong>Toque no capelo ao lado de um item que você viu, gostou e vai querer usar depois. Fica guardado aqui sem prazo.</div>`:`<div class="msg"><strong>Nada aqui</strong>Nenhum item ${fmt==="novos"?"novo ":""}nesse filtro.</div>`);
   if(ehLista()){$("end").hidden=false;$("end").innerHTML=L.length?`<span>${L.length} ${L.length===1?"item":"itens"} em ${NOME_L[modo]}. Toque no ícone de novo para tirar.</span>`:"";$("note").textContent="";renderStories();return}
   const pend=L.filter(i=>!seen.has(i.id)).length, vistosAqui=L.length-pend;
@@ -858,6 +872,7 @@ $("sh-corpo").addEventListener("click",e=>{
   const bl=e.target.closest(".acoes .lista");
   if(bl){const i=itemAberto();if(!i)return;const l=bl.dataset.l;tem(l,i.id)?dessalvar(l,i.id):salvar(l,i);bl.setAttribute("aria-pressed",tem(l,i.id));return}
   const sg=e.target.closest(".est-sug");if(sg){perguntaEstudo(sg.textContent);return}
+  const ti=e.target.closest(".tema-ir");if(ti){const i=[...salvos.values()].find(o=>o.id===ti.dataset.id&&o.lista==="estudar");if(i){registraFecho();abrir({...i,...(DATA.itens.find(x=>x.id===i.id)||{})})}return}
   if(e.target.closest(".est-edita")){const i=itemAberto();if(i)abreEnvioEstudo(i,true);return}
   if(e.target.closest(".est-ver-antigo")){const i=itemAberto();if(i){verAntigo.add(i.id);mostraEstudo(i)}return}
   const vt=e.target.closest(".votos .vt");
@@ -949,6 +964,7 @@ $("feed").addEventListener("click",e=>{
     return}
   if(e.target.closest("#recolh")){verRecolhidos=!verRecolhidos;if(verRecolhidos)ev("rep_ver");render();return}
   const ex=e.target.closest(".extras .ex");if(ex){const i=DATA.itens.find(x=>x.id===ex.dataset.id);if(i){ev("rep_extra",i.id);abrir(i)}return}
+  const tc=e.target.closest(".tema-card");if(tc){if(ESTUDO["tema:"+tc.dataset.tema])abrirTema(tc.dataset.tema);return}
   const sv=e.target.closest(".sav");
   if(sv){const id=sv.dataset.id,l=sv.dataset.l;if(tem(l,id))dessalvar(l,id);else{const i=DATA.itens.find(x=>x.id===id)||[...salvos.values()].find(o=>o.id===id);if(i)salvar(l,i)}return}
   const b=e.target.closest(".it");
