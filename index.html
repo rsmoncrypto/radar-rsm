@@ -349,7 +349,7 @@ h1 span{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--accent);
 </section>
 
 <script>
-const VERSAO = "e0dc3504f0";
+const VERSAO = "1582313076";
 /* se existir versão nova do app publicada, recarrega sem usar a cópia guardada */
 async function confereVersao(){
   try{const r=await fetch("versao.txt?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const v=(await r.text()).trim();
@@ -621,7 +621,7 @@ function render(){
   const at=new Date(DATA.atualizado);
   $("st").innerHTML=`atualizado ${at.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})}<br><b>${novos}</b> novos`;
   for(const l of ["depois","estudar"]){const n=[...salvos.values()].filter(o=>o.lista===l).length;$("m-"+l).innerHTML=ICON[l]+NOME_L[l]+(n?` ${n}`:"")}
-  $("chips").hidden=$("sub").hidden=ehLista();
+  $("chips").hidden=modo==="depois"||(modo==="estudar"&&!catsEstudo().size);$("sub").hidden=ehLista();
   const bN=document.querySelector('#fmt [data-f="novos"]');bN.hidden=ehLista();
   if(ehLista()&&fmt==="novos"){fmt="tudo";[...$("fmt").children].forEach(x=>x.setAttribute("aria-pressed",x.dataset.f==="tudo"))}
   const base=DATA.itens.filter(i=>modo==="tema"||!ehNoticia(i));
