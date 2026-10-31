@@ -277,6 +277,22 @@ h1 span{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--accent);
 .est-tab{width:100%;border-collapse:collapse;font-size:13px}.est-tab th,.est-tab td{border-bottom:1px solid var(--line);padding:6px 4px;text-align:left;vertical-align:top}.est-tab th{color:var(--muted);font-weight:600}
 .est-plano{display:flex;flex-direction:column;gap:8px;margin:6px 0}.est-plano .pl{background:var(--bg);border-radius:10px;padding:9px 11px;font-size:14px}.est-plano .pl span{display:block;color:var(--muted);font-size:13px;margin-top:2px}
 .md-li{padding-left:.9em;text-indent:-.9em;margin:.15em 0}.md-h{display:inline-block;margin-top:.4em}
+.em-fundo{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:flex;align-items:flex-end;justify-content:center}
+.em{background:var(--bg);color:var(--fg);width:100%;max-width:560px;box-sizing:border-box;border-radius:18px 18px 0 0;padding:18px 16px calc(16px + env(safe-area-inset-bottom));max-height:92vh;overflow:auto}
+.em h3{margin:0 0 4px;font-size:17px}.em .mut{color:var(--muted);font-size:13px;margin:0 0 6px}
+.em label{display:block;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+.em textarea{width:100%;box-sizing:border-box;min-height:120px;border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit;font-size:16px;background:var(--chip);color:var(--fg)}
+.em .cs{display:flex;flex-wrap:wrap;gap:6px}
+.em .cs button{border:1px solid var(--line);background:var(--chip);color:var(--fg);border-radius:999px;padding:7px 12px;font:inherit;font-size:14px}
+.em .cs button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);border-color:transparent;font-weight:600}
+.em input{border:1px dashed var(--faint);border-radius:999px;padding:7px 12px;font:inherit;font-size:16px;background:transparent;color:var(--fg);width:170px}
+.em .bt{display:flex;gap:8px;margin-top:18px}.em .bt button{flex:1;border:0;border-radius:12px;padding:13px;font:inherit;font-weight:600}
+.em .ok{background:var(--accent);color:#fff}.em .ok:disabled{opacity:.4}.em .no{background:var(--chip);color:var(--fg)}
+.est-obj{background:var(--chip);border-radius:12px;padding:10px 12px;margin:0 0 12px;font-size:14.5px}
+.est-obj small{display:block;color:var(--muted);font-size:12px;font-weight:600;margin-bottom:3px}
+.est-obj button{display:block;margin-top:6px;border:0;background:none;color:var(--accent);font:inherit;font-size:14px;font-weight:600;padding:0}
+.est-aviso p{font-size:15px;margin:4px 0}.est-aviso .bt2{display:flex;gap:8px;margin-top:12px}.est-aviso .bt2 button{flex:1;border:0;border-radius:10px;padding:12px;font:inherit;font-weight:600}
+.est-aviso .pri{background:var(--accent);color:#fff}.est-aviso .sec{background:var(--bg);color:var(--fg)}
 </style>
 </head>
 <body>
@@ -330,7 +346,7 @@ h1 span{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--accent);
 </section>
 
 <script>
-const VERSAO = "7b947a07e2";
+const VERSAO = "7dfa9f4fff";
 /* se existir versão nova do app publicada, recarrega sem usar a cópia guardada */
 async function confereVersao(){
   try{const r=await fetch("versao.txt?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const v=(await r.text()).trim();
@@ -394,7 +410,44 @@ try{if(!localStorage.getItem("radar-migr")&&seen.size){const t=[...seen];for(let
 function cache(){try{localStorage.setItem("radar-vistos",JSON.stringify({ids:[...seen].slice(-4000)}));localStorage.setItem("radar-salvos",JSON.stringify([...salvos.values()]));localStorage.setItem("radar-pend",JSON.stringify(pend))}catch(e){}}
 function aplica(ev){(ev.a||[]).forEach(i=>seen.add(i));(ev.d||[]).forEach(i=>seen.delete(i));(ev.s||[]).forEach(poeSalvo);(ev.u||[]).forEach(tiraSalvo)}
 function compacto(i){const o={};for(const k of ["id","titulo","nome","tema","tipo","url","img","vid","dur","quando","grupo","formato","perfil"])if(i[k]!==undefined&&i[k]!=="")o[k]=i[k];if(i.texto)o.texto=String(i.texto).slice(0,280);o.salvoEm=new Date().toISOString();return o}
-function salvar(l,i){ev(l,i.id);const o=compacto(i);o.lista=l;poeSalvo(o);pend.push({s:[o]});if(l==="estudar"&&!seen.has(i.id)){seen.add(i.id);pend.push({a:[i.id],d:[]})}cache();envia();render()}
+function salvar(l,i,extra){if(l==="estudar"&&!extra){abreEnvioEstudo(i);return}ev(l,i.id);const o=compacto(i);o.lista=l;if(extra)Object.assign(o,extra);poeSalvo(o);pend.push({s:[o]});if(l==="estudar"&&!seen.has(i.id)){seen.add(i.id);pend.push({a:[i.id],d:[]})}cache();envia();render()}
+let estCat="Todos",estSub="Todos";const verAntigo=new Set();
+function catsEstudo(){const m=new Map();for(const o of salvos.values())if(o.lista==="estudar"&&o.est_cat){if(!m.has(o.est_cat))m.set(o.est_cat,new Set());if(o.est_sub)m.get(o.est_cat).add(o.est_sub)}return m}
+const estLab=i=>i.est_cat?i.est_cat+(i.est_sub?" › "+i.est_sub:""):"Sem categoria";
+function abreEnvioEstudo(i,edita){
+  const o=edita?salvos.get(chaveL("estudar",i.id)):null;let cat=(o&&o.est_cat)||"",sub=(o&&o.est_sub)||"";
+  const f=document.createElement("div");f.className="em-fundo";
+  f.innerHTML=`<div class="em" role="dialog" aria-modal="true" aria-label="Objetivo do estudo"><h3>${o?"O que você quer com este estudo?":"Enviar para Estudar"}</h3><p class="mut">${esc(i.titulo)}</p>
+   <label for="em-t">O que você quer com este estudo?</label>
+   <textarea id="em-t" placeholder="O que chamou sua atenção, o que quer aprender ou aplicar, onde pensa em usar. É o norte que o Claude vai seguir.">${esc((o&&o.intencao)||"")}</textarea>
+   <label>Categoria (opcional)</label><div class="cs" id="em-cats"></div>
+   <div id="em-subw"><label id="em-subl">Subcategoria</label><div class="cs" id="em-subs"></div></div>
+   <div class="bt"><button type="button" class="no">Cancelar</button><button type="button" class="ok">${o?"Salvar":"Enviar para Estudar"}</button></div></div>`;
+  const confere=()=>{f.querySelector(".ok").disabled=f.querySelector("textarea").value.trim().length<8};
+  const desenha=()=>{const cs=catsEstudo();const cats=[...cs.keys()].sort((a,b)=>a.localeCompare(b));if(cat&&!cats.includes(cat))cats.push(cat);
+    const subs=cat?[...(cs.get(cat)||[])].sort((a,b)=>a.localeCompare(b)):[];if(sub&&!subs.includes(sub))subs.push(sub);
+    f.querySelector("#em-cats").innerHTML=cats.map(c=>`<button type="button" data-c="${esc(c)}" aria-pressed="${c===cat}">${esc(c)}</button>`).join("")+`<input id="em-nc" placeholder="+ nova categoria" maxlength="40" enterkeyhint="done">`;
+    f.querySelector("#em-subw").hidden=!cat;f.querySelector("#em-subl").textContent=cat?`Subcategoria de ${cat} (opcional)`:"";
+    f.querySelector("#em-subs").innerHTML=subs.map(c=>`<button type="button" data-s="${esc(c)}" aria-pressed="${c===sub}">${esc(c)}</button>`).join("")+`<input id="em-ns" placeholder="+ nova subcategoria" maxlength="40" enterkeyhint="done">`;
+    confere()};
+  document.body.appendChild(f);desenha();ev("estudar_objetivo_abriu",i.id,{e:o?1:0});
+  const novo=(inp,t)=>{const v=inp.value.trim().replace(/\s+/g," ");if(!v)return;if(t==="c"){cat=v;sub=""}else sub=v;desenha()};
+  f.addEventListener("input",e=>{if(e.target.tagName==="TEXTAREA")confere()});
+  f.addEventListener("keydown",e=>{if(e.key!=="Enter")return;if(e.target.id==="em-nc"){e.preventDefault();novo(e.target,"c")}else if(e.target.id==="em-ns"){e.preventDefault();novo(e.target,"s")}});
+  f.addEventListener("change",e=>{if(e.target.id==="em-nc")novo(e.target,"c");else if(e.target.id==="em-ns")novo(e.target,"s")});
+  f.addEventListener("click",e=>{
+    if(e.target===f||e.target.closest(".no")){f.remove();return}
+    const c=e.target.closest("[data-c]");if(c){cat=cat===c.dataset.c?"":c.dataset.c;sub="";desenha();return}
+    const s=e.target.closest("[data-s]");if(s){sub=sub===s.dataset.s?"":s.dataset.s;desenha();return}
+    if(!e.target.closest(".ok"))return;
+    const nc=f.querySelector("#em-nc"),ns=f.querySelector("#em-ns");if(nc&&nc.value.trim()){cat=nc.value.trim();sub=""}if(ns&&ns.value.trim()&&cat)sub=ns.value.trim();
+    const extra={intencao:f.querySelector("textarea").value.trim().slice(0,1500),est_cat:cat,est_sub:cat?sub:""};f.remove();
+    if(o){Object.assign(o,extra);pend.push({s:[o]});ev("estudar_objetivo",i.id);cache();envia();render();if(abertoId===i.id)mostraEstudo(i);
+      toast(`<span>Objetivo salvo. O Claude vai refazer o estudo com ele em alguns minutos.</span><button class="fx" aria-label="Fechar">×</button>`)}
+    else{salvar("estudar",i,extra);if(abertoId===i.id)document.querySelectorAll('.acoes .lista[data-l="estudar"]').forEach(b=>b.setAttribute("aria-pressed","true"));
+      toast(`<span>Enviado para Estudar${cat?" · "+esc(estLab(extra)):""}. O Claude começa em alguns minutos.</span><button class="fx" aria-label="Fechar">×</button>`)}
+  });
+}
 function dessalvar(l,id){ev("tirou_"+l,id);const k=chaveL(l,id);salvos.delete(k);pend.push({u:[k]});cache();envia();render()}
 let enviando=false;
 async function envia(){
@@ -533,9 +586,11 @@ function lista(){
   if(!DATA)return [];
   if(ehLista()){
     const atual=new Map(DATA.itens.map(i=>[i.id,i]));
-    return [...salvos.values()].filter(o=>o.lista===modo).map(o=>({...o,...(atual.get(o.id)||{}),salvoEm:o.salvoEm}))
+    const est=modo==="estudar",ord=i=>i.est_cat?"0"+estLab(i):"1";
+    return [...salvos.values()].filter(o=>o.lista===modo).map(o=>({...(atual.get(o.id)||{}),...o,salvoEm:o.salvoEm}))
       .filter(i=>fmt==="tudo"||fmt==="novos"?(fmt!=="novos"||!seen.has(i.id)):i.formato===fmt)
-      .sort((a,b)=>(b.salvoEm||"").localeCompare(a.salvoEm||""));
+      .filter(i=>!est||estCat==="Todos"||(estCat==="Sem categoria"?!i.est_cat:i.est_cat===estCat&&(estSub==="Todos"||i.est_sub===estSub)))
+      .sort((a,b)=>(est?ord(a).localeCompare(ord(b)):0)||(b.salvoEm||"").localeCompare(a.salvoEm||""));
   }
   return DATA.itens.filter(i=>(modo==="tema"||!ehNoticia(i))&&(tema==="Tudo"||chave(i)===tema)&&(modo!=="tema"||sub==="Todos"||i.nome===sub)
     &&(fmt==="tudo"||fmt==="novos"||i.formato===fmt)&&(fmt!=="novos"||!seen.has(i.id)||fica.has(i.id)));
@@ -574,6 +629,13 @@ function render(){
     $("sub").innerHTML=nomes.map(n=>`<button data-n="${esc(n)}" aria-pressed="${n===sub}">${esc(n)}${cs(n)?`<span>${cs(n)}</span>`:""}</button>`).join("");
   }else{$("sub").hidden=true;sub="Todos"}
   if(ehLista())$("sub").hidden=true;
+  if(modo==="estudar"){const cs=catsEstudo(),sal=[...salvos.values()].filter(o=>o.lista==="estudar");
+    const n=c=>sal.filter(o=>c==="Todos"||(c==="Sem categoria"?!o.est_cat:o.est_cat===c)).length;
+    const cats=["Todos",...[...cs.keys()].sort((a,b)=>a.localeCompare(b)),...(sal.some(o=>!o.est_cat)&&cs.size?["Sem categoria"]:[])];if(!cats.includes(estCat))estCat="Todos";
+    $("chips").innerHTML=cats.map(c=>`<button data-ec="${esc(c)}" aria-pressed="${c===estCat}">${esc(c)}<span>${n(c)}</span></button>`).join("");
+    const subs=cs.has(estCat)?[...cs.get(estCat)].sort((a,b)=>a.localeCompare(b)):[];if(!["Todos",...subs].includes(estSub))estSub="Todos";
+    const ns=s=>sal.filter(o=>o.est_cat===estCat&&(s==="Todos"||o.est_sub===s)).length;
+    $("sub").hidden=!subs.length;if(subs.length)$("sub").innerHTML=["Todos",...subs].map(s=>`<button data-es="${esc(s)}" aria-pressed="${s===estSub}">${esc(s)}<span>${ns(s)}</span></button>`).join("")}
   const L0=lista();
   let L=L0,recolhidos=[];const extras=new Map(),comp=new Set();
   if(!ehLista()&&fmt==="novos"){
@@ -589,9 +651,10 @@ function render(){
   for(const i of [...L,...(Lr.length?[{_sep:1}]:[]),...Lr]){
     if(i._sep){h+=`<div class="day">Assuntos que você já viu, sem novidade</div>`;continue}
     if(!ehLista()){const d=dia(i.quando);if(d!==ult){h+=`<div class="day">${d}</div>`;ult=d}}
+    else if(modo==="estudar"&&catsEstudo().size){const d=estLab(i);if(d!==ult){h+=`<div class="day">${esc(d)}</div>`;ult=d}}
     const s=!ehLista()&&seen.has(i.id);
     h+=`<div class="li${s?" seen":""}" data-id="${esc(i.id)}"><div class="fundo"><span class="sim">${s?"↺ Voltar para não visto":ICON_UP+" Me informei"}</span><span class="nao">Não me interessa ${ICON_DOWN}</span></div><div class="row"><button class="it" data-id="${esc(i.id)}">
-      <div><div class="m">${s||ehLista()?"":'<span class="dot" aria-label="novo"></span>'}${ehNoticia(i)?'<span class="src">notícia</span>':""}${modo==="estudar"?(ESTUDO[i.id]?'<span class="tag-res">aprofundado</span>':'<span class="tag-res and">aprofundando…</span>'):""}${(i.vid&&RESUMOS.has(i.vid))||(!i.vid&&i.nr)?'<span class="tag-res">resumo</span>':i.vid&&fila.has(i.vid)?'<span class="tag-res and">resumindo…</span>':""}<span class="who">${esc(i.nome)}${i.outras?` <span class="mais">+${i.outras.length}</span>`:""}</span><span>· ${esc(i.tipo)}${i.dur>0?" de "+tempo(i.dur):i.dur===-1?" ao vivo":""} · ${quando(i.quando)}</span></div>
+      <div><div class="m">${s||ehLista()?"":'<span class="dot" aria-label="novo"></span>'}${ehNoticia(i)?'<span class="src">notícia</span>':""}${modo==="estudar"?(!i.intencao?'<span class="tag-res and">falta seu objetivo</span>':ESTUDO[i.id]?'<span class="tag-res">aprofundado</span>':'<span class="tag-res and">aprofundando…</span>'):""}${(i.vid&&RESUMOS.has(i.vid))||(!i.vid&&i.nr)?'<span class="tag-res">resumo</span>':i.vid&&fila.has(i.vid)?'<span class="tag-res and">resumindo…</span>':""}<span class="who">${esc(i.nome)}${i.outras?` <span class="mais">+${i.outras.length}</span>`:""}</span><span>· ${esc(i.tipo)}${i.dur>0?" de "+tempo(i.dur):i.dur===-1?" ao vivo":""} · ${quando(i.quando)}</span></div>
       ${comp.has(i.id)?`<div class="rep">↺ Você já viu: <b>${esc((AS()[i.as]||{}).t||"")}</b><span>Novidade: ${esc(i.nov)}</span></div>`:""}<h3>${esc(i.titulo)}</h3>${i.texto?`<p>${esc(i.texto)}</p>`:""}${ehLista()&&i.salvoEm?`<div class="salvo-em">guardado em ${new Date(i.salvoEm).toLocaleDateString("pt-BR",{day:"numeric",month:"short"})}</div>`:""}</div>
       ${i.img&&i.img.startsWith("http")?`<span class="thumb"><img src="${esc(i.img)}" alt="" loading="lazy"><b>${i.dur?(i.tipo==="Short"?"Short · ":"")+tempo(i.dur):"▶ "+(i.tipo==="Short"?"Short":i.tipo==="Live"?"Live":"")}</b></span>`:""}</button>
       <div class="acts">${["depois","estudar"].map(l=>`<button class="sav ${l}" data-l="${l}" data-id="${esc(i.id)}" aria-pressed="${tem(l,i.id)}" aria-label="${tem(l,i.id)?"Tirar de "+NOME_L[l]:NOME_L[l]}" title="${NOME_L[l]}">${ICON[l]}</button>`).join("")}<span class="esp"></span>${ehLista()?"":`<button class="voto ruim" data-v="nao" data-id="${esc(i.id)}" aria-pressed="${naoSet.has(i.id)}" aria-label="Não me interessa" title="Não me interessa">${ICON_DOWN}</button><button class="voto bom" data-v="sim" data-id="${esc(i.id)}" aria-pressed="${s&&!naoSet.has(i.id)}" aria-label="Me informei" title="Me informei">${ICON_UP}</button>`}</div>${(extras.get(i.id)||[]).length?`<div class="extras"><span>Também sobre isso:</span>${extras.get(i.id).map(x=>`<button class="ex" data-id="${esc(x.id)}"><b>${esc(x.nome)}</b> ${esc(x.nov||x.fato||x.titulo)}</button>`).join("")}</div>`:""}</div></div>`;
@@ -694,9 +757,14 @@ function htmlEstudo(d){
    ${F.length?`<details class="est-fontes"><summary>${F.length} fontes</summary>${F.map(f=>`<div><span class="fn">${f.n}</span> <a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.titulo)}</a></div>`).join("")}</details>`:""}
    <p class="rodape">Feito por IA (${esc(d.modelo||"Gemini")}) com busca na web. Pode conter erros: confira nas fontes.</p></div>`}
 async function mostraEstudo(i){
-  const el=$("estudo");if(!el)return;const k=ESTUDO[i.id];
-  if(!k){el.innerHTML=`<div class="est"><div class="est-h">Aprofundamento da IA</div><p class="mut">O Claude está pesquisando e montando o estudo deste item. Leva alguns minutos; volte daqui a pouco.</p></div>`;return}
-  try{const d=await leEstudo(k);if(d&&abertoId===i.id){el.innerHTML=htmlEstudo(d);el.dataset.k=k;el.dataset.n=(d.conversa||[]).length}}catch(e){}
+  const el=$("estudo");if(!el)return;const k=ESTUDO[i.id],o=salvos.get(chaveL("estudar",i.id))||{};
+  const cat=o.est_cat?` · ${esc(estLab(o))}`:"";
+  const obj=o.intencao?`<div class="est-obj"><small>Seu objetivo${cat}</small>${esc(o.intencao)}<button class="est-edita">Editar objetivo e categoria</button></div>`
+    :`<div class="est-obj"><small>Seu objetivo${cat}</small><i>ainda não escrito</i><button class="est-edita">Responder agora</button></div>`;
+  if(!o.intencao&&k&&!verAntigo.has(i.id)){el.innerHTML=`<div class="est est-aviso"><div class="est-h">Antes de seguir</div><p>Reveja o ${i.vid?"vídeo":"conteúdo"} e diga o que você quer com este estudo. O Claude vai refazer o aprofundamento usando a sua resposta como norte.</p><div class="bt2"><button class="sec est-ver-antigo">Ver o estudo atual</button><button class="pri est-edita">Responder</button></div></div>`;return}
+  if(!k){el.innerHTML=`${obj}<div class="est"><div class="est-h">Aprofundamento da IA</div><p class="mut">O Claude está pesquisando e montando o estudo a partir do seu objetivo. Leva alguns minutos; volte daqui a pouco.</p></div>`;return}
+  try{const d=await leEstudo(k);if(d&&abertoId===i.id){const refaz=o.intencao&&(d.intencao||"")!==o.intencao;
+    el.innerHTML=obj+(refaz?`<div class="aviso">O Claude está refazendo o estudo com o seu objetivo. Leva alguns minutos; abaixo, a versão anterior.</div>`:"")+htmlEstudo(d);el.dataset.k=k;el.dataset.n=(d.conversa||[]).length}}catch(e){}
 }
 async function perguntaEstudo(p){
   const el=$("estudo");if(!el||!el.dataset.k||!p.trim())return;const k=el.dataset.k,n0=+el.dataset.n||0,id=abertoId;
@@ -790,6 +858,8 @@ $("sh-corpo").addEventListener("click",e=>{
   const bl=e.target.closest(".acoes .lista");
   if(bl){const i=itemAberto();if(!i)return;const l=bl.dataset.l;tem(l,i.id)?dessalvar(l,i.id):salvar(l,i);bl.setAttribute("aria-pressed",tem(l,i.id));return}
   const sg=e.target.closest(".est-sug");if(sg){perguntaEstudo(sg.textContent);return}
+  if(e.target.closest(".est-edita")){const i=itemAberto();if(i)abreEnvioEstudo(i,true);return}
+  if(e.target.closest(".est-ver-antigo")){const i=itemAberto();if(i){verAntigo.add(i.id);mostraEstudo(i)}return}
   const vt=e.target.closest(".votos .vt");
   if(vt){const i=itemAberto();if(!i)return;const id=i.id;
     if(vt.dataset.v==="sim"){if(simSet.has(id)&&!naoSet.has(id)){simSet.delete(id);ev("desfez",id)}else{simSet.add(id);if(naoSet.delete(id))guardaNao();ev("bom",id)}guardaSim()}
@@ -889,8 +959,8 @@ $("end").addEventListener("click",e=>{
   else if(e.target.id==="undo"){const l=lote;lote=[];desmarca(l)}
   else if(e.target.id==="unall"){desmarca(lista().map(i=>i.id))}
 });
-$("chips").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;ev("filtro",null,{k:modo==="pessoa"?"pessoa":"tema",v:b.dataset.t});limpaFica();tema=b.dataset.t;sub="Todos";lote=[];render();window.scrollTo({top:0,behavior:"smooth"})});
-$("sub").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;ev("filtro",null,{k:"canal",v:b.dataset.n});limpaFica();sub=b.dataset.n;lote=[];render();window.scrollTo({top:0,behavior:"smooth"})});
+$("chips").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.ec!==undefined){estCat=b.dataset.ec;estSub="Todos";ev("filtro",null,{k:"estudo_cat",v:estCat});render();window.scrollTo({top:0,behavior:"smooth"});return}ev("filtro",null,{k:modo==="pessoa"?"pessoa":"tema",v:b.dataset.t});limpaFica();tema=b.dataset.t;sub="Todos";lote=[];render();window.scrollTo({top:0,behavior:"smooth"})});
+$("sub").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.es!==undefined){estSub=b.dataset.es;render();window.scrollTo({top:0,behavior:"smooth"});return}ev("filtro",null,{k:"canal",v:b.dataset.n});limpaFica();sub=b.dataset.n;lote=[];render();window.scrollTo({top:0,behavior:"smooth"})});
 function trocaModo(m){limpaFica();ev("filtro",null,{k:"modo",v:m});const deLista=ehLista();modo=m;tema="Tudo";lote=[];if(deLista&&!ehLista()){fmt="novos";[...$("fmt").children].forEach(x=>x.setAttribute("aria-pressed",x.dataset.f==="novos"))}document.querySelectorAll("#modo button,#listas button").forEach(x=>x.setAttribute("aria-pressed",x.dataset.m===m));render();window.scrollTo({top:0})}
 $("modo").addEventListener("click",e=>{const b=e.target.closest("button");if(b)trocaModo(b.dataset.m)});
 $("m-rel").addEventListener("click",async()=>{if(modo==="relatorio"){trocaModo("tema");return}ev("relatorio");trocaModo("relatorio");await carregaRel();if(modo==="relatorio")render()});
