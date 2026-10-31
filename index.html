@@ -276,6 +276,7 @@ h1 span{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--accent);
 .est-tl .q{display:block;font-weight:700;color:var(--accent);font-size:13px}
 .est-tab{width:100%;border-collapse:collapse;font-size:13px}.est-tab th,.est-tab td{border-bottom:1px solid var(--line);padding:6px 4px;text-align:left;vertical-align:top}.est-tab th{color:var(--muted);font-weight:600}
 .est-plano{display:flex;flex-direction:column;gap:8px;margin:6px 0}.est-plano .pl{background:var(--bg);border-radius:10px;padding:9px 11px;font-size:14px}.est-plano .pl span{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.md-li{padding-left:.9em;text-indent:-.9em;margin:.15em 0}.md-h{display:inline-block;margin-top:.4em}
 </style>
 </head>
 <body>
@@ -329,7 +330,7 @@ h1 span{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--accent);
 </section>
 
 <script>
-const VERSAO = "7981fd049a";
+const VERSAO = "7b947a07e2";
 /* se existir versão nova do app publicada, recarrega sem usar a cópia guardada */
 async function confereVersao(){
   try{const r=await fetch("versao.txt?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const v=(await r.text()).trim();
@@ -642,10 +643,11 @@ const limpaFica=()=>fica.clear();
 let ESTUDO={};
 async function carregaEstudo(){try{const r=await fetch("estudar/index.json?t="+Date.now(),{cache:"no-store"});if(r.ok){const n=await r.json();const mudou=JSON.stringify(n)!==JSON.stringify(ESTUDO);ESTUDO=n;if(mudou&&modo==="estudar")render()}}catch(e){}}
 async function leEstudo(k){const r=await fetch(`estudar/${k}.json?t=${Date.now()}`,{cache:"no-store"});return r.ok?await dec(r):null}
+function mdr(t){return t.split("\n").map(l=>{l=l.replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");let m;if(m=l.match(/^\s*#{1,4}\s+(.*)/))return `<b class="md-h">${m[1]}</b><br>`;if(m=l.match(/^\s*[-•*]\s+(.*)/))return `<div class="md-li">• ${m[1]}</div>`;if(m=l.match(/^\s*(\d+)[.)]\s+(.*)/))return `<div class="md-li">${m[1]}. ${m[2]}</div>`;return l.trim()?l+"<br>":"<br>"}).join("").replace(/(<br>){3,}/g,"<br><br>")}
 function htmlSecao(x,fonte,cita){
   const T=x.titulo?`<h4>${esc(x.titulo)}</h4>`:"";const it=x.itens||[];
   switch(x.tipo){
-    case "texto":return T+`<p>${cita(x.texto||"")}</p>`;
+    case "texto":return T+`<p>${mdr(cita(x.texto||""))}</p>`;
     case "lista":return T+`<ul>${it.map(v=>`<li>${cita(v)}</li>`).join("")}</ul>`;
     case "conceitos":return T+`<dl>${it.map(c=>`<dt>${esc(c.termo)}</dt><dd>${cita(c.explicacao||"")}</dd>`).join("")}</dl>`;
     case "passos":return T+`<ol class="est-passos">${it.map(p=>`<li><b>${esc(p.titulo||"")}</b>${p.detalhe?`<span>${cita(p.detalhe)}</span>`:""}</li>`).join("")}</ol>`;
@@ -665,7 +667,7 @@ function htmlEstudo(d){
      <div class="est-h">${esc(d.titulo||"Estudo")}</div>
      ${d.resumo?`<p class="est-tese">${cita(d.resumo)}</p>`:""}
      ${(d.secoes||[]).map(x=>htmlSecao(x,fonte,cita)).join("")}
-     ${(d.conversa||[]).length?`<h4>Suas perguntas</h4>${d.conversa.map(c=>`<div class="est-q"><b>${esc(c.p)}</b><div>${cita(c.r).replace(/\n/g,"<br>")}</div></div>`).join("")}`:""}
+     ${(d.conversa||[]).length?`<h4>Suas perguntas</h4>${d.conversa.map(c=>`<div class="est-q"><b>${esc(c.p)}</b><div>${mdr(cita(c.r))}</div></div>`).join("")}`:""}
      <div class="est-perg">${(d.perguntas||[]).map(p=>`<button class="est-sug">${esc(p)}</button>`).join("")}</div>
      <form class="est-form" id="est-form"><input id="est-in" placeholder="Pergunte ou peça algo sobre isso…" autocomplete="off"><button>Perguntar</button></form>
      <div class="est-esp" id="est-esp" hidden>Claude pensando<span class="pts"></span></div>
@@ -685,7 +687,7 @@ function htmlEstudo(d){
    ${(d.insights||[]).length?`<h4>Insights</h4><ul>${d.insights.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}
    ${(d.aplicar||[]).length?`<h4>Como aplicar</h4><ul class="est-ap">${d.aplicar.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}
    ${(d.leituras||[]).length?`<h4>Para ler</h4><ul>${d.leituras.map(l=>{const f=F.find(x=>x.n===l.fonte);return f?`<li><a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.titulo)}</a> — ${esc(l.por_que||"")}</li>`:""}).join("")}</ul>`:""}
-   ${(d.conversa||[]).length?`<h4>Suas perguntas</h4>${d.conversa.map(c=>`<div class="est-q"><b>${esc(c.p)}</b><div>${cita(c.r).replace(/\n/g,"<br>")}</div></div>`).join("")}`:""}
+   ${(d.conversa||[]).length?`<h4>Suas perguntas</h4>${d.conversa.map(c=>`<div class="est-q"><b>${esc(c.p)}</b><div>${mdr(cita(c.r))}</div></div>`).join("")}`:""}
    <div class="est-perg">${(d.perguntas||[]).map(p=>`<button class="est-sug">${esc(p)}</button>`).join("")}</div>
    <form class="est-form" id="est-form"><input id="est-in" placeholder="Pergunte algo sobre isso…" autocomplete="off"><button>Perguntar</button></form>
    <div class="est-esp" id="est-esp" hidden>Pensando<span class="pts"></span></div>
