@@ -350,7 +350,7 @@ h1 span{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--accent);
 </section>
 
 <script>
-const VERSAO = "15ab7f99bd";
+const VERSAO = "80e1c6e6e9";
 /* se existir versão nova do app publicada, recarrega sem usar a cópia guardada */
 async function confereVersao(){
   try{const r=await fetch("versao.txt?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const v=(await r.text()).trim();
@@ -382,7 +382,7 @@ async function dec(resp){const t=await resp.text();if(!t.startsWith("RR1:"))retu
   for(let i=0;i<n;i++){const h=new Uint8Array(ks[i]);for(let j=0;j<32&&i*32+j<b.length;j++)out[i*32+j]=b[i*32+j]^h[j]}
   return JSON.parse(await new Response(new Blob([out]).stream().pipeThrough(new DecompressionStream("deflate"))).text())}
 const DISP=/iPhone|iPad/.test(navigator.userAgent)?"iphone":/Android/.test(navigator.userAgent)?"android":"pc";
-function ev(tipo,id,x){const e=[Math.floor(Date.now()/1000),tipo,id||null];if(x)e.push(x);evq.push(e);if(evq.length>2000)evq=evq.slice(-2000);try{localStorage.setItem("radar-ev",JSON.stringify(evq))}catch(er){}}
+function ev(tipo,id,x){try{if(localStorage.getItem("radar-teste"))return}catch(er){}const e=[Math.floor(Date.now()/1000),tipo,id||null];if(x)e.push(x);evq.push(e);if(evq.length>2000)evq=evq.slice(-2000);try{localStorage.setItem("radar-ev",JSON.stringify(evq))}catch(er){}}
 let enviandoEv=false;
 async function enviaEv(){
   if(enviandoEv||!evq.length)return;enviandoEv=true;
@@ -1047,9 +1047,15 @@ $("ref").addEventListener("click",async()=>{
   finally{clearInterval(pontos);atualizando=false;$("ref").classList.remove("girando")}
 });
 let ultimaCarga=Date.now();
-let sessIni=Date.now();ev("app");
-document.addEventListener("visibilitychange",()=>{if(document.hidden){saiuEm=Date.now();ev("sai",null,{s:Math.round((Date.now()-sessIni)/1000)});if(abertoId)registraFecho();enviaEv();return}
-  sessIni=Date.now();ev("app");confereVersao();carregaIndice();if(saiuEm&&Date.now()-saiuEm>10*60000){limpaFica();render()}vigiaFila();sincroniza();if(Date.now()-ultimaCarga>3*60000){ultimaCarga=Date.now();carregar()}});
+/* tempo no app: soma só o tempo com a tela visível, em passos de 15 s; se o iPhone congelou o app
+   (intervalo > 60 s sem passo), esse buraco não conta. */
+let ativoMs=0,tickEm=Date.now(),naSessao=true;ev("app");
+const passo=()=>{const n=Date.now(),d=n-tickEm;if(!document.hidden&&d<60000)ativoMs+=d;tickEm=n};
+setInterval(passo,15000);
+const voltou=()=>{if(naSessao){tickEm=Date.now();return}naSessao=true;ativoMs=0;tickEm=Date.now();ev("app")};
+window.addEventListener("pageshow",()=>{if(!document.hidden)voltou()});window.addEventListener("focus",()=>{if(!document.hidden)voltou()});
+document.addEventListener("visibilitychange",()=>{if(document.hidden){if(!naSessao)return;passo();naSessao=false;saiuEm=Date.now();ev("sai",null,{s:Math.round(ativoMs/1000)});ativoMs=0;if(abertoId)registraFecho();enviaEv();return}
+  voltou();confereVersao();carregaIndice();if(saiuEm&&Date.now()-saiuEm>10*60000){limpaFica();render()}vigiaFila();sincroniza();if(Date.now()-ultimaCarga>3*60000){ultimaCarga=Date.now();carregar()}});
 confereVersao();carregar().then(sincroniza);carregaIndice();carregaEstudo();vigiaFila();
 setInterval(()=>{if(!document.hidden){carregaIndice();carregaEstudo()}},90000);
 </script>
