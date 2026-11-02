@@ -167,7 +167,7 @@ async function resumoDe(d){
   try{
     const u=d.vid?`resumos/${encodeURIComponent(d.vid)}.json`:d.nr?`noticias/${d.nr}.json`:null;if(!u)return null;
     const r=await fetch(u+"?t="+Date.now(),{cache:"no-store"});return r.ok?await dec(r):null}catch(e){return null}}
-$("corpo").addEventListener("click",async e=>{if(e.target.closest("#topo")){window.scrollTo({top:0,behavior:"smooth"});return}
+$("corpo").addEventListener("click",async e=>{if(e.target.closest("#topo")){ev("pano_topo",DIA);window.scrollTo({top:0,behavior:"smooth"});setTimeout(()=>{if(window.scrollY>50)window.scrollTo(0,0)},900);return}
   const b=e.target.closest(".dt>button");if(!b)return;
   const box=b.parentElement,ab=box.querySelector(".abre");
   if(!ab.hidden){ab.hidden=true;ab.innerHTML="";return}
