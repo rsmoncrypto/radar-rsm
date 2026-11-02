@@ -350,7 +350,7 @@ h1 span{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--accent);
 </section>
 
 <script>
-const VERSAO = "b8b8863fec";
+const VERSAO = "15ab7f99bd";
 /* se existir versão nova do app publicada, recarrega sem usar a cópia guardada */
 async function confereVersao(){
   try{const r=await fetch("versao.txt?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const v=(await r.text()).trim();
