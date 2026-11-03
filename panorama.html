@@ -115,7 +115,7 @@ async function dec(resp){const t=await resp.text();if(!t.startsWith("RR1:"))retu
 /* sinais de uso do Panorama: mesma fila do Radar (radar-ev), enviada ao Mac pelo ntfy; dado bruto fica só no Mac */
 const TOPICO="radar-rsm-120cf1e02de4f9d7";
 const DISP=/iPhone|iPad/.test(navigator.userAgent)?"iphone":/Android/.test(navigator.userAgent)?"android":"pc";
-function ev(tipo,id,x){let q=[];try{q=JSON.parse(localStorage.getItem("radar-ev")||"[]")}catch(e){}const e=[Math.floor(Date.now()/1000),tipo,id||null];if(x)e.push(x);q.push(e);try{localStorage.setItem("radar-ev",JSON.stringify(q.slice(-2000)))}catch(er){}}
+function ev(tipo,id,x){try{if(localStorage.getItem("radar-teste"))return}catch(er){}let q=[];try{q=JSON.parse(localStorage.getItem("radar-ev")||"[]")}catch(e){}const e=[Math.floor(Date.now()/1000),tipo,id||null];if(x)e.push(x);q.push(e);try{localStorage.setItem("radar-ev",JSON.stringify(q.slice(-2000)))}catch(er){}}
 let enviando=false;
 async function enviaEv(){if(enviando)return;enviando=true;try{let q=[];try{q=JSON.parse(localStorage.getItem("radar-ev")||"[]")}catch(e){}
   while(q.length){let n=0,tam=40;while(n<q.length&&tam+JSON.stringify(q[n]).length<3500){tam+=JSON.stringify(q[n]).length+1;n++}n=Math.max(n,1);
@@ -123,8 +123,13 @@ async function enviaEv(){if(enviando)return;enviando=true;try{let q=[];try{q=JSO
     let atual=[];try{atual=JSON.parse(localStorage.getItem("radar-ev")||"[]")}catch(e){}atual=atual.slice(n);localStorage.setItem("radar-ev",JSON.stringify(atual));q=atual}}catch(e){}finally{enviando=false}}
 let iniPano=Date.now(),maxScP=0,temasLidos=new Set(),obsT=null;
 addEventListener("scroll",()=>{const h=document.documentElement;maxScP=Math.max(maxScP,(scrollY+innerHeight)/h.scrollHeight)},{passive:true});
-function saiPano(){ev("pano_sai",DIA,{s:Math.round((Date.now()-iniPano)/1000),sc:Math.round(maxScP*100),temas:temasLidos.size});enviaEv()}
-document.addEventListener("visibilitychange",()=>{if(document.hidden)saiPano();else{iniPano=Date.now();maxScP=0;ev("pano_abriu",DIA)}});
+/* tempo: soma só tela visível, em passos de 15 s (congelamento do iPhone não conta) */
+let ativoP=0,tickP=Date.now(),naSessaoP=true;
+const passoP=()=>{const n=Date.now(),d=n-tickP;if(!document.hidden&&d<60000)ativoP+=d;tickP=n};setInterval(passoP,15000);
+function saiPano(){if(!naSessaoP)return;passoP();naSessaoP=false;ev("pano_sai",DIA,{s:Math.round(ativoP/1000),sc:Math.round(maxScP*100),temas:temasLidos.size});ativoP=0;enviaEv()}
+const voltouP=()=>{if(naSessaoP){tickP=Date.now();return}naSessaoP=true;ativoP=0;tickP=Date.now();maxScP=0;ev("pano_abriu",DIA)};
+document.addEventListener("visibilitychange",()=>{if(document.hidden)saiPano();else voltouP()});
+addEventListener("pagehide",saiPano);addEventListener("pageshow",()=>{if(!document.hidden)voltouP()});
 setInterval(enviaEv,20000);
 function vigiaTemas(){if(obsT)obsT.disconnect();const tm=new Map();
   obsT=new IntersectionObserver(es=>{for(const e of es){const t=e.target.dataset.tema;if(e.isIntersecting){tm.set(t,setTimeout(()=>{if(!temasLidos.has(t)){temasLidos.add(t);ev("pano_tema",DIA,{t})}},3000))}else clearTimeout(tm.get(t))}},{threshold:.4});

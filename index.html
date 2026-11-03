@@ -297,6 +297,7 @@ h1 span{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--accent);
 .est-obj button{display:block;margin-top:6px;border:0;background:none;color:var(--accent);font:inherit;font-size:14px;font-weight:600;padding:0}
 .est-aviso p{font-size:15px;margin:4px 0}.est-aviso .bt2{display:flex;gap:8px;margin-top:12px}.est-aviso .bt2 button{flex:1;border:0;border-radius:10px;padding:12px;font:inherit;font-weight:600}
 .est-aviso .pri{background:var(--accent);color:#fff}.est-aviso .sec{background:var(--bg);color:var(--fg)}
+.rel .medias{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.rel .medias div{background:var(--chip);border-radius:12px;padding:10px 12px;min-width:0}.rel .medias b{display:block;font-size:20px;font-variant-numeric:tabular-nums}.rel .medias span{font-size:12px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -350,7 +351,7 @@ h1 span{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--accent);
 </section>
 
 <script>
-const VERSAO = "80e1c6e6e9";
+const VERSAO = "0d2226bdb7";
 /* se existir versão nova do app publicada, recarrega sem usar a cópia guardada */
 async function confereVersao(){
   try{const r=await fetch("versao.txt?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const v=(await r.text()).trim();
@@ -506,9 +507,9 @@ const NOME_CL={vale:"Vale a pena",ocasional:"Ocasional",manchete:"Só manchete",
 /* comportamento: onde para sem abrir, como navega, o que faz dentro do item e no Panorama (desde 30/10) */
 /* tempo no Radar: barras por dia (com minutos) e, para o dia escolhido, minutos por hora */
 let relDia=null;
-function relTempoTopo(td){
+function relTempoTopo(td,md){
   const ds=(td||[]).filter(x=>x.min>0);if(!ds.length)return "";
-  if(!relDia||(relDia!=="7d"&&!ds.some(x=>x.data===relDia)))relDia=ds[ds.length-1].data;
+  if(!relDia||relDia==="7d"||!ds.some(x=>x.data===relDia))relDia=ds[ds.length-1].data;
   const max=Math.max(...ds.map(x=>x.min));
   const sel=relDia==="7d"?null:ds.find(x=>x.data===relDia);
   const horas=Array(24).fill(0);(sel?[sel]:ds).forEach(x=>x.horas.forEach((v,h)=>horas[h]+=v));
@@ -518,8 +519,9 @@ function relTempoTopo(td){
   const _h=new Date(),hoje=`${_h.getFullYear()}-${String(_h.getMonth()+1).padStart(2,"0")}-${String(_h.getDate()).padStart(2,"0")}`;
   return `<div class="card"><h3>Seu tempo no Radar</h3>
    <div class="dias-bar">${ds.map(x=>`<button data-d="${x.data}" aria-pressed="${x.data===relDia}"><span class="v">${fm(x.min)}</span><i style="height:${Math.max(6,Math.round(64*x.min/max))}px"></i><span class="d">${x.data===hoje?"hoje":x.dia}</span></button>`).join("")}
-    ${ds.length>1?`<button data-d="7d" aria-pressed="${relDia==="7d"}" class="sete"><span class="v">${fm(ds.reduce((a,x)=>a+x.min,0))}</span><i style="height:6px;opacity:0"></i><span class="d">7 dias</span></button>`:""}</div>
-   <p class="lin" style="margin-top:12px"><b>${fm(tot.min)}</b> no app · ${tot.sessoes} ${tot.sessoes===1?"abertura":"aberturas"} · ${tot.abertos} itens abertos${relDia==="7d"&&ds.length?` · média ${fm(tot.min/ds.length)} por dia`:""}</p>
+  </div>
+   <p class="lin" style="margin-top:12px"><b>${fm(tot.min)}</b> no app · ${tot.sessoes} ${tot.sessoes===1?"abertura":"aberturas"} · ${tot.abertos} itens abertos</p>
+   ${md&&md.semana!=null?`<div class="medias"><div><b>${fm(md.semana)}</b><span>média dos últimos 7 dias</span></div><div><b>${fm(md.geral)}</b><span>média geral (${md.dias_geral} ${md.dias_geral===1?"dia":"dias"})</span></div></div>`:""}
    <h4 class="sub-h">${relDia==="7d"?"Por horário (soma dos dias)":"Por horário"}</h4>
    <div class="hlist">${horas.map((v,h)=>v>=.5?`<div class="hr"><span class="h">${h}h</span><span class="b"><i style="width:${Math.max(3,Math.round(100*v/hmax))}%"></i></span><span class="m">${fm(v)}</span></div>`:"").join("")}</div>
   </div>`}
@@ -559,7 +561,8 @@ function relGemini(g){
    ${g.limites_lidos?`<p style="font-size:12px;color:var(--faint);margin:8px 0 0">Limites: ${esc(g.limites_lidos)}. Zera às 5h.</p>`:""}
    ${(g.dias||[]).length>1?`<p style="font-size:12.5px;color:var(--muted);margin:8px 0 0">Dias anteriores: ${g.dias.slice(1).map(x=>`${x.dia} ${k(x.tokens)}${x.erros_cota?" (cota acabou)":""}`).join(" · ")}</p>`:""}
   </div>`}
-function renderRel(){
+function renderRel(){_renderRel();const b=document.querySelector(".dias-bar");if(b){const s=b.querySelector('button[aria-pressed="true"]');b.scrollLeft=s?Math.max(0,s.offsetLeft+s.offsetWidth-b.clientWidth+24):b.scrollWidth}}
+function _renderRel(){
   const d=REL;const f=document.getElementById("feed");
   if(!d||!d.dias){f.innerHTML=`<div class="rel"><div class="card vazio"><b>Coletando dados.</b><br>O Radar começou a anotar seu uso agora: o que você abre, assiste, arrasta para a direita (me informei) ou para a esquerda (não me interessa), e o que guarda. O relatório se atualiza a cada coleta. Com uma semana de uso ele fica confiável.</div></div>`;return}
   const u=d[relPer]||{};const n=x=>Math.round(x||0);
@@ -579,7 +582,7 @@ function renderRel(){
      <div class="kpi"><b>${n(u.depois)}</b><span>para Ver depois</span></div>
      <div class="kpi"><b>${n(u.resumo)}</b><span>resumos pedidos</span></div>
     </div></div>
-   ${relTempoTopo(d.tempo_dias)}
+   ${relTempoTopo(d.tempo_dias,d.medias)}
    ${relComport(d.comportamento&&d.comportamento[relPer],d.comportamento_desde)}
    ${relGemini(d.gemini)}
    ${(d.sugestoes||[]).length?`<div class="card"><h3>Sugestões</h3><div class="sug">${d.sugestoes.map(x=>`<div>${esc(x.texto)}</div>`).join("")}</div><p class="vazio" style="font-size:12.5px;margin:10px 0 0">Por enquanto, para aplicar uma sugestão, me peça no chat do Claude.</p></div>`:""}
