@@ -210,7 +210,7 @@ function desenhaTab(){
     h+=`<table class="tb"><colgroup><col style="width:30px"><col>${G.cols.map(c=>`<col style="width:${c==="Seq"?40:c==="%"?44:c==="JA"?36:c==="SG"?36:30}px">`).join("")}</colgroup>
       <thead><tr><th>#</th><th class="tm">Time</th>${G.cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>
       ${G.linhas.map((x,i)=>{const prox=G.linhas[i+1];const corte=prox&&prox.z!==x.z&&!(x.z==="a"&&prox.z==="b"&&L.id!=="nba");
-        return `<tr class="${x.z?"z"+x.z:""}${corte?" corte":""}"><td class="ps">${x.p}</td><td class="tm">${x.logo?`<img src="${esc(x.logo)}" alt="" loading="lazy">`:""}${esc(x.time)}</td>${x.v.map((v,j)=>`<td${j===0&&L.id==="bra"?' class="dst"':""}>${esc(v)}</td>`).join("")}</tr>`}).join("")}
+        return `<tr class="${x.z?"z"+x.z:""}${corte?" corte":""}"><td class="ps">${x.p}</td><td class="tm">${x.logo?`<img src="${esc(x.logo)}" alt="" loading="lazy" onerror="this.remove()">`:""}${esc(x.time)}</td>${x.v.map((v,j)=>`<td${j===0&&L.id==="bra"?' class="dst"':""}>${esc(v)}</td>`).join("")}</tr>`}).join("")}
       </tbody></table>
       <div class="leg">${(L.legenda||[]).map(([z,n])=>`<span><i class="${z}"></i>${esc(n)}</span>`).join("")}</div>`;
     const g=new Date(TB.gerado);h+=`<div class="at">Atualizada ${g.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})} às ${g.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})} · fonte ${esc(TB.fonte||"ESPN")}</div>`}
