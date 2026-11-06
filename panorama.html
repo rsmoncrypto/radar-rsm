@@ -86,6 +86,30 @@ body{font-size:calc(16px * var(--esc))}
 .tam button{font:inherit;font-weight:700;border:1px solid var(--line);background:none;color:var(--fg);border-radius:10px;width:46px;height:40px;cursor:pointer}
 .tam span{flex:1;text-align:center;font-size:14px;color:var(--muted)}
 .topo{display:block;width:100%;margin:10px 0 28px;padding:14px;border:0;border-radius:12px;background:var(--chip);color:var(--fg);font:inherit;font-weight:600;font-size:15px}
+.tabs{margin:16px 0 4px}
+.tabs .rt{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.tabs .ab{display:flex;gap:8px;flex-wrap:wrap}
+.tabs .ab button,.tabs .sub button{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:999px;padding:8px 14px;cursor:pointer}
+.tabs .ab button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.tabs .sub{display:flex;gap:6px;margin:12px 0 8px}
+.tabs .sub button{font-size:13px;padding:6px 12px;background:none;color:var(--muted)}
+.tabs .sub button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.tb{width:100%;border-collapse:collapse;font-size:calc(13.5px * var(--esc));font-variant-numeric:tabular-nums;margin-top:8px;table-layout:fixed}
+.tb th{font-size:11px;font-weight:700;color:var(--muted);text-align:right;padding:6px 3px;border-bottom:1px solid var(--line)}
+.tb th.tm{text-align:left}
+.tb td{padding:7px 3px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+.tb td.ps{width:30px;text-align:center;color:var(--muted);font-weight:600;border-left:3px solid transparent}
+.tb tr.za td.ps{border-left-color:var(--accent);color:var(--accent)}
+.tb tr.zb td.ps{border-left-color:color-mix(in srgb,var(--accent) 45%,transparent)}
+.tb tr.zr td.ps{border-left-color:#C2453A;color:#C2453A}
+.tb td.tm{text-align:left;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+.tb td.tm img{width:18px;height:18px;object-fit:contain;vertical-align:-4px;margin-right:6px}
+.tb td.dst{font-weight:700}
+.tb tr.corte td{border-bottom:2px dashed var(--faint)}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:8px 0 2px}
+.leg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.leg .a{background:var(--accent)}.leg .b{background:color-mix(in srgb,var(--accent) 45%,transparent)}.leg .r{background:#C2453A}
+.tabs .at{font-size:12px;color:var(--faint);margin-top:6px}
 </style></head><body><div class="wrap">
 <div class="topo"><div><div class="eyebrow">Radar RSM</div><h1>Panorama do dia</h1><div class="meta" id="meta">Carregando…</div></div><a class="voltar" href="./">← Radar</a></div>
 <nav class="dias" id="dias" hidden></nav>
@@ -161,13 +185,40 @@ async function carregar(){
       <h3 id="b-m${ti}">${esc(t.manchete)}</h3>
       <p class="tx" id="b-t${ti}">${esc(t.texto)}</p>
       ${t.divergencias?`<div class="diverg" id="b-d${ti}"><b>Atenção</b>${esc(t.divergencias)}</div>`:""}
+      ${t.tema==="Esportes"?'<div class="tabs" id="tabs"></div>':""}
       <div class="fontes">Fontes: ${t.fontes.map(esc).join(", ")}</div>
       ${t.destaques.length?`<div class="dest">${t.destaques.map((d,di)=>`<div class="dt" data-t="${ti}" data-d="${di}"><button>${d.img?`<img src="${esc(d.img)}" alt="" loading="lazy">`:""}<div class="tt"><b>${esc(d.titulo)}</b><span>${esc(d.nome)} · ${esc(d.tipo)}${tempo(d.dur)?" de "+tempo(d.dur):""}</span>${d.motivo?`<em>${esc(d.motivo)}</em>`:""}</div></button><div class="abre" hidden></div></div>`).join("")}</div>`:""}
     </section>`).join("")}
     <div class="fim"><b>Você está em dia.</b>O resto está no Radar, item por item.</div><button class="topo" id="topo" type="button">↑ Voltar ao topo</button>`;
+  if(!$("tabs"))$("corpo").querySelector(".fim").insertAdjacentHTML("beforebegin",'<section class="tema" data-tema="Esportes"><div class="rot"><b>Esportes</b></div><div class="tabs" id="tabs"></div></section>');
+  tabelas();
   temasLidos=new Set();vigiaTemas();
   
 }
+/* tabelas de classificação (Esportes): abas que abrem só quando ele toca; dado de site/tabelas.json */
+let TB=null,TBsel={l:null,g:0};
+async function tabelas(){
+  if(!TB){try{const r=await fetch("tabelas.json?t="+Date.now(),{cache:"no-store"});if(r.ok)TB=await dec(r)}catch(e){}}
+  const el=$("tabs");if(!el)return;if(!TB||!TB.ligas||!TB.ligas.length){el.remove();return}
+  desenhaTab()}
+function desenhaTab(){
+  const el=$("tabs");if(!el)return;
+  let h=`<div class="rt">Classificação</div><div class="ab">${TB.ligas.map(l=>`<button data-l="${l.id}" aria-pressed="${TBsel.l===l.id}">${esc(l.nome)}</button>`).join("")}</div>`;
+  const L=TB.ligas.find(l=>l.id===TBsel.l);
+  if(L){const G=L.grupos[TBsel.g]||L.grupos[0];
+    if(L.grupos.length>1)h+=`<div class="sub">${L.grupos.map((g,i)=>`<button data-g="${i}" aria-pressed="${g===G}">${esc(g.nome)}</button>`).join("")}</div>`;
+    h+=`<table class="tb"><colgroup><col style="width:30px"><col>${G.cols.map(c=>`<col style="width:${c==="Seq"?40:c==="%"?44:c==="JA"?36:c==="SG"?36:30}px">`).join("")}</colgroup>
+      <thead><tr><th>#</th><th class="tm">Time</th>${G.cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>
+      ${G.linhas.map((x,i)=>{const prox=G.linhas[i+1];const corte=prox&&prox.z!==x.z&&!(x.z==="a"&&prox.z==="b"&&L.id!=="nba");
+        return `<tr class="${x.z?"z"+x.z:""}${corte?" corte":""}"><td class="ps">${x.p}</td><td class="tm">${x.logo?`<img src="${esc(x.logo)}" alt="" loading="lazy">`:""}${esc(x.time)}</td>${x.v.map((v,j)=>`<td${j===0&&L.id==="bra"?' class="dst"':""}>${esc(v)}</td>`).join("")}</tr>`}).join("")}
+      </tbody></table>
+      <div class="leg">${(L.legenda||[]).map(([z,n])=>`<span><i class="${z}"></i>${esc(n)}</span>`).join("")}</div>`;
+    const g=new Date(TB.gerado);h+=`<div class="at">Atualizada ${g.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})} às ${g.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})} · fonte ${esc(TB.fonte||"ESPN")}</div>`}
+  el.innerHTML=h}
+document.addEventListener("click",e=>{const t=e.target.closest("#tabs button");if(!t)return;e.stopPropagation();
+  if(t.dataset.l){TBsel={l:TBsel.l===t.dataset.l?null:t.dataset.l,g:0};if(TBsel.l)ev("pano_tabela",DIA,{l:TBsel.l})}
+  else{TBsel.g=+t.dataset.g;ev("pano_tabela",DIA,{l:TBsel.l,g:TBsel.g})}
+  desenhaTab()});
 async function resumoDe(d){
   try{
     const u=d.vid?`resumos/${encodeURIComponent(d.vid)}.json`:d.nr?`noticias/${d.nr}.json`:null;if(!u)return null;
