@@ -265,6 +265,18 @@ h1 span{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--accent);
 .est-graf .gl{display:grid;grid-template-columns:minmax(80px,40%) 1fr auto;gap:8px;align-items:center;font-size:13px}
 .est-graf .b{height:12px;background:var(--line);border-radius:6px;overflow:hidden}.est-graf .b i{display:block;height:100%;background:var(--accent)}
 .est-graf .v{font-weight:600;font-variant-numeric:tabular-nums}
+.novo-est{all:unset;box-sizing:border-box;display:block;width:100%;cursor:pointer;border:1.5px dashed var(--accent);border-radius:14px;padding:12px 14px;margin:4px 0 14px}
+.novo-est b{display:block;color:var(--accent);font-size:15px}.novo-est span{font-size:13px;color:var(--muted)}
+.em-ti{width:100%;font:inherit;font-size:15px;border:1px solid var(--line);border-radius:10px;padding:10px;margin:4px 0 10px;background:var(--bg);color:var(--fg)}
+.est-x .cs{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.est-x .cs button,.vinc-b button{font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:999px;padding:7px 11px;cursor:pointer}
+.vinc{border-bottom:1px solid var(--line);padding:9px 0}.vinc a{color:var(--fg);text-decoration:none}.vinc b{font-size:14.5px}
+.vinc>span{display:block;font-size:12.5px;color:var(--muted)}.vinc em{font-size:12.5px;color:var(--accent);font-style:normal}
+.vinc-b{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:6px}.vinc-b>span{font-size:12.5px;color:var(--muted);width:100%}
+.vinc-b .vsim{color:var(--accent)}
+.levar-in{font:inherit;font-size:14px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-width:220px;background:var(--bg);color:var(--fg)}
+.est-copia{font:inherit;font-size:13px;font-weight:600;border:0;border-radius:999px;padding:7px 12px;background:var(--accent);color:#fff;margin-top:6px;cursor:pointer}
+.tag-res.vinc{background:var(--warn-soft);color:var(--warn)}
 .est-q{background:var(--bg);border-radius:10px;padding:9px 11px;margin:6px 0;font-size:14px}.est-q b{display:block;margin-bottom:3px}
 .est-perg{display:flex;flex-direction:column;gap:6px;margin:12px 0 8px}
 .est-sug{all:unset;cursor:pointer;font-size:13.5px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--bg)}
@@ -354,7 +366,7 @@ h1 span{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--accent);
 </section>
 
 <script>
-const VERSAO = "08c8bb73ed";
+const VERSAO = "ac171ed6e9";
 /* se existir versão nova do app publicada, recarrega sem usar a cópia guardada */
 async function confereVersao(){
   try{const r=await fetch("versao.txt?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const v=(await r.text()).trim();
@@ -425,13 +437,13 @@ const estLab=i=>i.est_cat?i.est_cat+(i.est_sub?" › "+i.est_sub:""):"Sem catego
 function abreEnvioEstudo(i,edita){
   const o=edita?salvos.get(chaveL("estudar",i.id)):null;let cat=(o&&o.est_cat)||"",sub=(o&&o.est_sub)||"";
   const f=document.createElement("div");f.className="em-fundo";
-  f.innerHTML=`<div class="em" role="dialog" aria-modal="true" aria-label="Objetivo do estudo"><h3>${o?"O que você quer com este estudo?":"Enviar para Estudar"}</h3><p class="mut">${esc(i.titulo)}</p>
+  f.innerHTML=`<div class="em" role="dialog" aria-modal="true" aria-label="Objetivo do estudo"><h3>${o?"O que você quer com este estudo?":i.livre?"Novo estudo":"Enviar para Estudar"}</h3>${i.livre&&!o?`<label for="em-ti">Tema do estudo</label><input id="em-ti" class="em-ti" placeholder="Ex.: Jesus como professor, com um olhar filosófico" maxlength="140">`:`<p class="mut">${esc(i.titulo)}</p>`}
    <label for="em-t">O que você quer com este estudo?</label>
    <textarea id="em-t" placeholder="O que chamou sua atenção, o que quer aprender ou aplicar, onde pensa em usar. É o norte que o Claude vai seguir.">${esc((o&&o.intencao)||"")}</textarea>
    <label>Categoria (opcional)</label><div class="cs" id="em-cats"></div>
    <div id="em-subw"><label id="em-subl">Subcategoria</label><div class="cs" id="em-subs"></div></div>
    <div class="bt"><button type="button" class="no">Cancelar</button><button type="button" class="ok">${o?"Salvar":"Enviar para Estudar"}</button></div></div>`;
-  const confere=()=>{f.querySelector(".ok").disabled=f.querySelector("textarea").value.trim().length<8};
+  const confere=()=>{const ti=f.querySelector("#em-ti");f.querySelector(".ok").disabled=f.querySelector("textarea").value.trim().length<8||(ti&&ti.value.trim().length<3)};
   const desenha=()=>{const cs=catsEstudo();const cats=[...cs.keys()].sort((a,b)=>a.localeCompare(b));if(cat&&!cats.includes(cat))cats.push(cat);
     const subs=cat?[...(cs.get(cat)||[])].sort((a,b)=>a.localeCompare(b)):[];if(sub&&!subs.includes(sub))subs.push(sub);
     f.querySelector("#em-cats").innerHTML=cats.map(c=>`<button type="button" data-c="${esc(c)}" aria-pressed="${c===cat}">${esc(c)}</button>`).join("")+`<input id="em-nc" placeholder="+ nova categoria" maxlength="40" enterkeyhint="done">`;
@@ -440,7 +452,7 @@ function abreEnvioEstudo(i,edita){
     confere()};
   document.body.appendChild(f);desenha();ev("estudar_objetivo_abriu",i.id,{e:o?1:0});
   const novo=(inp,t)=>{const v=inp.value.trim().replace(/\s+/g," ");if(!v)return;if(t==="c"){cat=v;sub=""}else sub=v;desenha()};
-  f.addEventListener("input",e=>{if(e.target.tagName==="TEXTAREA")confere()});
+  f.addEventListener("input",e=>{if(e.target.tagName==="TEXTAREA"||e.target.id==="em-ti")confere()});
   f.addEventListener("keydown",e=>{if(e.key!=="Enter")return;if(e.target.id==="em-nc"){e.preventDefault();novo(e.target,"c")}else if(e.target.id==="em-ns"){e.preventDefault();novo(e.target,"s")}});
   f.addEventListener("change",e=>{if(e.target.id==="em-nc")novo(e.target,"c");else if(e.target.id==="em-ns")novo(e.target,"s")});
   f.addEventListener("click",e=>{
@@ -449,7 +461,8 @@ function abreEnvioEstudo(i,edita){
     const s=e.target.closest("[data-s]");if(s){sub=sub===s.dataset.s?"":s.dataset.s;desenha();return}
     if(!e.target.closest(".ok"))return;
     const nc=f.querySelector("#em-nc"),ns=f.querySelector("#em-ns");if(nc&&nc.value.trim()){cat=nc.value.trim();sub=""}if(ns&&ns.value.trim()&&cat)sub=ns.value.trim();
-    const extra={intencao:f.querySelector("textarea").value.trim().slice(0,1500),est_cat:cat,est_sub:cat?sub:""};f.remove();
+    const extra={intencao:f.querySelector("textarea").value.trim().slice(0,1500),est_cat:cat,est_sub:cat?sub:""};
+    const tiI=f.querySelector("#em-ti");if(tiI){i.titulo=tiI.value.trim().slice(0,140);extra.livre=true;ev("estudar_livre",i.id)}f.remove();
     if(o){Object.assign(o,extra);pend.push({s:[o]});ev("estudar_objetivo",i.id);cache();envia();render();if(abertoId===i.id)mostraEstudo(i);
       toast(`<span>Objetivo salvo. O Claude vai refazer o estudo com ele em alguns minutos.</span><button class="fx" aria-label="Fechar">×</button>`)}
     else{salvar("estudar",i,extra);if(abertoId===i.id)document.querySelectorAll('.acoes .lista[data-l="estudar"]').forEach(b=>b.setAttribute("aria-pressed","true"));
@@ -686,7 +699,7 @@ function render(){
     else if(modo==="estudar"&&catsEstudo().size){const d=estLab(i);if(d!==ult){h+=`<div class="day">${esc(d)}</div>`;ult=d}}
     const s=!ehLista()&&seen.has(i.id);
     h+=`<div class="li${s?" seen":""}" data-id="${esc(i.id)}"><div class="fundo"><span class="sim">${s?"↺ Voltar para não visto":ICON_UP+" Me informei"}</span><span class="nao">Não me interessa ${ICON_DOWN}</span></div><div class="row"><button class="it" data-id="${esc(i.id)}">
-      <div><div class="m">${s||ehLista()?"":'<span class="dot" aria-label="novo"></span>'}${ehNoticia(i)?'<span class="src">notícia</span>':""}${modo==="estudar"?(!i.intencao?'<span class="tag-res and">falta seu objetivo</span>':ESTUDO[i.id]?'<span class="tag-res">aprofundado</span>':'<span class="tag-res and">aprofundando…</span>'):""}${(i.vid&&RESUMOS.has(i.vid))||(!i.vid&&i.nr)?'<span class="tag-res">resumo</span>':i.vid&&fila.has(i.vid)?'<span class="tag-res and">resumindo…</span>':""}<span class="who">${esc(i.nome)}${i.outras?` <span class="mais">+${i.outras.length}</span>`:""}</span><span>· ${esc(i.tipo)}${i.dur>0?" de "+tempo(i.dur):i.dur===-1?" ao vivo":""} · ${quando(i.quando)}</span></div>
+      <div><div class="m">${s||ehLista()?"":'<span class="dot" aria-label="novo"></span>'}${ehNoticia(i)?'<span class="src">notícia</span>':""}${modo!=="estudar"&&VINCI[i.id]?`<span class="tag-res vinc">↳ estudo: ${esc(VINCI[i.id].slice(0,28))}</span>`:""}${modo==="estudar"?(!i.intencao?'<span class="tag-res and">falta seu objetivo</span>':ESTUDO[i.id]?'<span class="tag-res">aprofundado</span>':'<span class="tag-res and">aprofundando…</span>'):""}${(i.vid&&RESUMOS.has(i.vid))||(!i.vid&&i.nr)?'<span class="tag-res">resumo</span>':i.vid&&fila.has(i.vid)?'<span class="tag-res and">resumindo…</span>':""}<span class="who">${esc(i.nome)}${i.outras?` <span class="mais">+${i.outras.length}</span>`:""}</span><span>· ${esc(i.tipo)}${i.dur>0?" de "+tempo(i.dur):i.dur===-1?" ao vivo":""} · ${quando(i.quando)}</span></div>
       ${comp.has(i.id)?`<div class="rep">↺ Você já viu: <b>${esc((AS()[i.as]||{}).t||"")}</b><span>Novidade: ${esc(i.nov)}</span></div>`:""}<h3>${esc(i.titulo)}</h3>${i.texto?`<p>${esc(i.texto)}</p>`:""}${ehLista()&&i.salvoEm?`<div class="salvo-em">guardado em ${new Date(i.salvoEm).toLocaleDateString("pt-BR",{day:"numeric",month:"short"})}</div>`:""}</div>
       ${i.img&&i.img.startsWith("http")?`<span class="thumb"><img src="${esc(i.img)}" alt="" loading="lazy"><b>${i.dur?(i.tipo==="Short"?"Short · ":"")+tempo(i.dur):"▶ "+(i.tipo==="Short"?"Short":i.tipo==="Live"?"Live":"")}</b></span>`:""}</button>
       <div class="acts">${["depois","estudar"].map(l=>`<button class="sav ${l}" data-l="${l}" data-id="${esc(i.id)}" aria-pressed="${tem(l,i.id)}" aria-label="${tem(l,i.id)?"Tirar de "+NOME_L[l]:NOME_L[l]}" title="${NOME_L[l]}">${ICON[l]}</button>`).join("")}<span class="esp"></span>${ehLista()?"":`<button class="voto ruim" data-v="nao" data-id="${esc(i.id)}" aria-pressed="${naoSet.has(i.id)}" aria-label="Não me interessa" title="Não me interessa">${ICON_DOWN}</button><button class="voto bom" data-v="sim" data-id="${esc(i.id)}" aria-pressed="${s&&!naoSet.has(i.id)}" aria-label="Me informei" title="Me informei">${ICON_UP}</button>`}</div>${(extras.get(i.id)||[]).length?`<div class="extras"><span>Também sobre isso:</span>${extras.get(i.id).map(x=>`<button class="ex" data-id="${esc(x.id)}"><b>${esc(x.nome)}</b> ${esc(x.nov||x.fato||x.titulo)}</button>`).join("")}</div>`:""}</div></div>`;
@@ -696,6 +709,7 @@ function render(){
   if(modo==="estudar"&&estCat!=="Todos"&&estCat!=="Sem categoria"){const rot=estSub==="Todos"?estCat:estCat+" › "+estSub,k=ESTUDO["tema:"+rot]||ESTUDO["tema:"+estCat];
     const n=[...salvos.values()].filter(o=>o.lista==="estudar"&&o.intencao&&o.est_cat===estCat&&(estSub==="Todos"||o.est_sub===estSub)).length;
     h=`<button class="tema-card" data-tema="${esc(ESTUDO["tema:"+rot]?rot:estCat)}"><b>Espaço do tema · ${esc(rot)}</b><span>${k?"O Claude cruza os estudos daqui: o que você já aprendeu, debates, lacunas e um plano único. Toque para abrir e conversar.":n<2?"Nasce quando houver 2 estudos com objetivo aqui. Aí o Claude cruza tudo num lugar só.":"O Claude está montando o espaço deste tema. Volte em alguns minutos."}</span></button>`+h}
+  if(modo==="estudar")h=`<button class="novo-est" id="novo-est" type="button"><b>+ Criar estudo do zero</b><span>Você escolhe o tema e o objetivo; o Claude pesquisa e monta o estudo.</span></button>`+h;
   $("feed").innerHTML=h||(modo==="depois"?`<div class="msg"><strong>Nada em Ver depois</strong>Toque no relógio ao lado de qualquer item para guardar e ver com calma. Não conta como visto e não some depois de 7 dias.</div>`:modo==="estudar"?`<div class="msg"><strong>Nada em Estudar</strong>Toque no capelo ao lado de um item que você viu, gostou e vai querer usar depois. Fica guardado aqui sem prazo.</div>`:`<div class="msg"><strong>Nada aqui</strong>Nenhum item ${fmt==="novos"?"novo ":""}nesse filtro.</div>`);
   if(ehLista()){$("end").hidden=false;$("end").innerHTML=L.length?`<span>${L.length} ${L.length===1?"item":"itens"} em ${NOME_L[modo]}. Toque no ícone de novo para tirar.</span>`:"";$("note").textContent="";renderStories();return}
   const pend=L.filter(i=>!seen.has(i.id)).length, vistosAqui=L.length-pend;
@@ -738,8 +752,26 @@ const votosHTML=i=>`<div class="votos"><button class="vt ruim" data-v="nao" aria
 let fica=new Set(), saiuEm=0;
 const limpaFica=()=>fica.clear();
 /* Estudar: dossiê da IA (radar_estudar.py) — estudar/index.json = {id do item: chave} */
-let ESTUDO={};
-async function carregaEstudo(){try{const r=await fetch("estudar/index.json?t="+Date.now(),{cache:"no-store"});if(r.ok){const n=await r.json();const mudou=JSON.stringify(n)!==JSON.stringify(ESTUDO);ESTUDO=n;if(mudou&&modo==="estudar")render()}}catch(e){}}
+let ESTUDO={},VINC={},VINCI={};
+async function carregaVinc(){try{const r=await fetch("estudar/vinculos.json?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;VINC=await dec(r);
+  const tit={};for(const o of salvos.values())if(o.lista==="estudar"&&ESTUDO[o.id])tit[ESTUDO[o.id]]=o.titulo;
+  const n={};for(const [k,l] of Object.entries(VINC))for(const x of l)if(x.status!=="nao")n[x.id]=tit[k]||"um estudo seu";
+  const mudou=JSON.stringify(n)!==JSON.stringify(VINCI);VINCI=n;if(mudou&&modo!=="relatorio")render()}catch(e){}}
+/* Estudar 2 (11/11/2026): conteúdos do feed ligados ao estudo, debate entre estudos e "levar para" outro lugar do Claude */
+const DESTINOS=["Conselho RSM","CRM da RSM","Automações da RSM","Projeto Casa","Finanças pessoais e holding","Radar RSM"];
+function extrasEstudo(k,id){if(!k||k.startsWith("t_"))return"";
+  const vs=(VINC[k]||[]).filter(x=>x.status!=="nao");
+  const outros=[...salvos.values()].filter(o=>o.lista==="estudar"&&ESTUDO[o.id]&&ESTUDO[o.id]!==k);
+  return `<div class="est est-x">
+   ${vs.length?`<div class="est-h">Do feed, ligado a este estudo</div>${vs.map(x=>`<div class="vinc"><a href="${esc(x.url)}" target="_blank" rel="noopener"><b>${esc(x.titulo)}</b></a><span>${esc(x.nome)} · ${esc(x.motivo||"")}</span>
+     ${x.status==="pendente"?`<div class="vinc-b"><span>Esse vínculo faz sentido?</span><button type="button" class="vsim" data-k="${k}" data-id="${esc(x.id)}">Sim, aprofundar</button><button type="button" class="vnao" data-k="${k}" data-id="${esc(x.id)}">Não tem a ver</button></div>`:`<em>✓ incorporado ao estudo</em>`}</div>`).join("")}`
+     :`<div class="est-h">Do feed, ligado a este estudo</div><p class="mut">O Radar procura, de hora em hora, conteúdos novos que acrescentam a este estudo. Quando achar, eles aparecem aqui para você confirmar.</p>`}
+   <div class="est-h" style="margin-top:14px">Levar para</div><p class="mut">O Claude prepara um pacote pronto para colar no chat ou projeto certo e aplicar o estudo lá.</p>
+   <div class="cs">${DESTINOS.map(d=>`<button type="button" class="levar" data-d="${esc(d)}">${esc(d)}</button>`).join("")}<button type="button" class="levar" data-d="">Outro…</button></div>
+   ${outros.length?`<div class="est-h" style="margin-top:14px">Debater com outro estudo</div><p class="mut">O Claude confronta os dois e diz qual caminho faz mais sentido para você.</p>
+   <div class="cs">${outros.map(o=>`<button type="button" class="debate" data-k2="${ESTUDO[o.id]}">${esc(o.titulo.slice(0,48))}</button>`).join("")}</div>`:""}
+  </div>`}
+async function carregaEstudo(){try{const r=await fetch("estudar/index.json?t="+Date.now(),{cache:"no-store"});if(r.ok){const n=await r.json();const mudou=JSON.stringify(n)!==JSON.stringify(ESTUDO);ESTUDO=n;if(mudou&&modo==="estudar")render()}}catch(e){}carregaVinc()}
 async function leEstudo(k){const r=await fetch(`estudar/${k}.json?t=${Date.now()}`,{cache:"no-store"});return r.ok?await dec(r):null}
 function mdr(t){return t.split("\n").map(l=>{l=l.replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");let m;if(m=l.match(/^\s*#{1,4}\s+(.*)/))return `<b class="md-h">${m[1]}</b><br>`;if(m=l.match(/^\s*[-•*]\s+(.*)/))return `<div class="md-li">• ${m[1]}</div>`;if(m=l.match(/^\s*(\d+)[.)]\s+(.*)/))return `<div class="md-li">${m[1]}. ${m[2]}</div>`;return l.trim()?l+"<br>":"<br>"}).join("").replace(/(<br>){3,}/g,"<br><br>")}
 function htmlSecao(x,fonte,cita){
@@ -765,7 +797,7 @@ function htmlEstudo(d){
      <div class="est-h">${esc(d.titulo||"Estudo")}</div>
      ${d.resumo?`<p class="est-tese">${cita(d.resumo)}</p>`:""}
      ${(d.secoes||[]).map(x=>htmlSecao(x,fonte,cita)).join("")}
-     ${(d.conversa||[]).length?`<h4>Suas perguntas</h4>${d.conversa.map(c=>`<div class="est-q"><b>${esc(c.p)}</b><div>${mdr(cita(c.r))}</div></div>`).join("")}`:""}
+     ${(d.conversa||[]).length?`<h4>Suas perguntas</h4>${d.conversa.map(c=>`<div class="est-q"><b>${esc(c.p)}</b><div>${mdr(cita(c.r))}</div>${c.copiar?`<button type="button" class="est-copia" data-txt="${esc(c.r)}">Copiar pacote</button>`:""}</div>`).join("")}`:""}
      <div class="est-perg">${(d.perguntas||[]).map(p=>`<button class="est-sug">${esc(p)}</button>`).join("")}</div>
      <form class="est-form" id="est-form"><input id="est-in" placeholder="Pergunte ou peça algo sobre isso…" autocomplete="off"><button>Perguntar</button></form>
      <div class="est-esp" id="est-esp" hidden>Claude pensando<span class="pts"></span></div>
@@ -785,7 +817,7 @@ function htmlEstudo(d){
    ${(d.insights||[]).length?`<h4>Insights</h4><ul>${d.insights.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}
    ${(d.aplicar||[]).length?`<h4>Como aplicar</h4><ul class="est-ap">${d.aplicar.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}
    ${(d.leituras||[]).length?`<h4>Para ler</h4><ul>${d.leituras.map(l=>{const f=F.find(x=>x.n===l.fonte);return f?`<li><a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.titulo)}</a> — ${esc(l.por_que||"")}</li>`:""}).join("")}</ul>`:""}
-   ${(d.conversa||[]).length?`<h4>Suas perguntas</h4>${d.conversa.map(c=>`<div class="est-q"><b>${esc(c.p)}</b><div>${mdr(cita(c.r))}</div></div>`).join("")}`:""}
+   ${(d.conversa||[]).length?`<h4>Suas perguntas</h4>${d.conversa.map(c=>`<div class="est-q"><b>${esc(c.p)}</b><div>${mdr(cita(c.r))}</div>${c.copiar?`<button type="button" class="est-copia" data-txt="${esc(c.r)}">Copiar pacote</button>`:""}</div>`).join("")}`:""}
    <div class="est-perg">${(d.perguntas||[]).map(p=>`<button class="est-sug">${esc(p)}</button>`).join("")}</div>
    <form class="est-form" id="est-form"><input id="est-in" placeholder="Pergunte algo sobre isso…" autocomplete="off"><button>Perguntar</button></form>
    <div class="est-esp" id="est-esp" hidden>Pensando<span class="pts"></span></div>
@@ -799,14 +831,14 @@ async function mostraEstudo(i){
   if(!o.intencao&&k&&!verAntigo.has(i.id)){el.innerHTML=`<div class="est est-aviso"><div class="est-h">Antes de seguir</div><p>Reveja o ${i.vid?"vídeo":"conteúdo"} e diga o que você quer com este estudo. O Claude vai refazer o aprofundamento usando a sua resposta como norte.</p><div class="bt2"><button class="sec est-ver-antigo">Ver o estudo atual</button><button class="pri est-edita">Responder</button></div></div>`;return}
   if(!k){el.innerHTML=`${obj}<div class="est"><div class="est-h">Aprofundamento da IA</div><p class="mut">O Claude está pesquisando e montando o estudo a partir do seu objetivo. Leva alguns minutos; volte daqui a pouco.</p></div>`;return}
   try{const d=await leEstudo(k);if(d&&abertoId===i.id){const refaz=o.intencao&&(d.intencao||"")!==o.intencao;
-    el.innerHTML=obj+(refaz?`<div class="aviso">O Claude está refazendo o estudo com o seu objetivo. Leva alguns minutos; abaixo, a versão anterior.</div>`:"")+htmlEstudo(d);el.dataset.k=k;el.dataset.n=(d.conversa||[]).length}}catch(e){}
+    el.innerHTML=obj+(refaz?`<div class="aviso">O Claude está refazendo o estudo com o seu objetivo. Leva alguns minutos; abaixo, a versão anterior.</div>`:"")+htmlEstudo(d)+extrasEstudo(k,i.id);el.dataset.k=k;el.dataset.n=(d.conversa||[]).length}}catch(e){}
 }
-async function perguntaEstudo(p){
-  const el=$("estudo");if(!el||!el.dataset.k||!p.trim())return;const k=el.dataset.k,n0=+el.dataset.n||0,id=abertoId;
-  ev("estudar_pergunta",id);$("est-esp").hidden=false;$("est-in").value="";
-  try{await fetch("https://ntfy.sh/"+TOPICO+"-q",{method:"POST",body:JSON.stringify({k,p:p.slice(0,500)})})}catch(e){}
+async function perguntaEstudo(p,corpo,tipo){
+  const el=$("estudo");if(!el||!el.dataset.k||(!corpo&&!p.trim()))return;const k=el.dataset.k,n0=+el.dataset.n||0,id=abertoId;
+  ev(tipo||"estudar_pergunta",id);$("est-esp").hidden=false;$("est-in").value="";$("est-esp").scrollIntoView({behavior:"smooth",block:"center"});
+  try{await fetch("https://ntfy.sh/"+TOPICO+"-q",{method:"POST",body:JSON.stringify(corpo?corpo(k):{k,p:p.slice(0,500)})})}catch(e){}
   for(let t=0;t<40;t++){await new Promise(r=>setTimeout(r,6000));if(abertoId!==id)return;
-    try{const d=await leEstudo(k);if(d&&(d.conversa||[]).length>n0){el.innerHTML=htmlEstudo(d);el.dataset.k=k;el.dataset.n=d.conversa.length;el.querySelector(".est-q:last-of-type")?.scrollIntoView({behavior:"smooth",block:"center"});return}}catch(e){}}
+    try{const d=await leEstudo(k);if(d&&(d.conversa||[]).length>n0){el.innerHTML=htmlEstudo(d)+extrasEstudo(k,id);el.dataset.k=k;el.dataset.n=d.conversa.length;el.querySelector(".est-q:last-of-type")?.scrollIntoView({behavior:"smooth",block:"center"});return}}catch(e){}}
   const esp=$("est-esp");if(esp)esp.textContent="O Mac não respondeu ainda. Tente de novo em alguns minutos.";
 }
 async function carregaIndice(){try{const r=await fetch("resumos/index.json?t="+Date.now(),{cache:"no-store"});if(r.ok){const n=new Set(await r.json());const mudou=n.size!==RESUMOS.size||[...n].some(v=>!RESUMOS.has(v));RESUMOS=n;if(mudou)render()}}catch(e){}}
@@ -893,6 +925,15 @@ $("sh-corpo").addEventListener("click",e=>{
   const bl=e.target.closest(".acoes .lista");
   if(bl){const i=itemAberto();if(!i)return;const l=bl.dataset.l;tem(l,i.id)?dessalvar(l,i.id):salvar(l,i);bl.setAttribute("aria-pressed",tem(l,i.id));return}
   const sg=e.target.closest(".est-sug");if(sg){perguntaEstudo(sg.textContent);return}
+  const vb=e.target.closest(".vsim,.vnao");if(vb){const ok=vb.classList.contains("vsim"),k=vb.dataset.k,id=vb.dataset.id;const x=(VINC[k]||[]).find(y=>y.id===id);if(x)x.status=ok?"ok":"nao";
+    ev("estudar_vinculo",id,{ok:ok?1:0});
+    if(ok)perguntaEstudo("",()=>({vinc:{k,id,ok:true}}),"estudar_vinculo_ok");else{fetch("https://ntfy.sh/"+TOPICO+"-q",{method:"POST",body:JSON.stringify({vinc:{k,id,ok:false}})}).catch(()=>{});vb.closest(".vinc").remove()}
+    if(ok)vb.closest(".vinc-b").outerHTML="<em>Aprofundando com este conteúdo…</em>";return}
+  const lv=e.target.closest(".levar");if(lv){let d=lv.dataset.d;if(!d){const inp=document.createElement("input");inp.className="levar-in";inp.placeholder="Para onde? (ex.: projeto Finanças da fazenda)";lv.replaceWith(inp);inp.focus();
+      inp.addEventListener("keydown",ev2=>{if(ev2.key==="Enter"&&inp.value.trim()){const v=inp.value.trim().slice(0,80);perguntaEstudo("",k=>({levar:{k,destino:v}}),"estudar_levar")}});return}
+    perguntaEstudo("",k=>({levar:{k,destino:d}}),"estudar_levar");return}
+  const db=e.target.closest(".debate");if(db){perguntaEstudo("",k=>({debate:{k,k2:db.dataset.k2}}),"estudar_debate");return}
+  const cp=e.target.closest(".est-copia");if(cp){navigator.clipboard.writeText(cp.dataset.txt).then(()=>{cp.textContent="Copiado ✓";ev("estudar_copiou",abertoId)}).catch(()=>{});return}
   const ti=e.target.closest(".tema-ir");if(ti){const i=[...salvos.values()].find(o=>o.id===ti.dataset.id&&o.lista==="estudar");if(i){registraFecho();abrir({...i,...(DATA.itens.find(x=>x.id===i.id)||{})})}return}
   if(e.target.closest(".est-edita")){const i=itemAberto();if(i)abreEnvioEstudo(i,true);return}
   if(e.target.closest(".est-ver-antigo")){const i=itemAberto();if(i){verAntigo.add(i.id);mostraEstudo(i)}return}
@@ -936,6 +977,8 @@ function abrir(i){
       <div class="acoes"><button class="sec lista" data-l="depois" aria-pressed="${tem("depois",i.id)}">${ICON.depois}Ver depois</button><button class="sec lista" data-l="estudar" aria-pressed="${tem("estudar",i.id)}">${ICON.estudar}Estudar</button><a class="sec" href="${esc(i.url)}" target="_blank" rel="noopener">Abrir no YouTube</a></div>
       ${votosHTML(i)}
       ${i.texto?`<div class="desc">${esc(i.texto)}</div>`:""}`;
+  }else if(String(i.id).startsWith("livre:")){
+    c=`<h2>${esc(i.titulo)}</h2><p class="mut">Estudo criado por você, sem conteúdo de partida.</p>`;
   }else{
     const corpo=(i.completo||i.texto||"").split(/\n{2,}/).filter(Boolean).map(p=>`<p>${esc(p)}</p>`).join("");
     const orig=i.titulo_original?`<div class="outras">Original: ${esc(i.titulo_original)}</div>`:"";
@@ -949,7 +992,7 @@ function abrir(i){
   if(tem("estudar",i.id))mostraEstudo(i);
   $("scrim").hidden=false;$("sheet").hidden=false;document.body.classList.add("travado");
   requestAnimationFrame(()=>{$("scrim").classList.add("on");$("sheet").classList.add("on")});
-  if(i.vid){tocar(i,!RESUMOS.has(i.vid));mostraResumo(i)}else mostraNoticia(i);
+  if(i.vid){tocar(i,!RESUMOS.has(i.vid));mostraResumo(i)}else if(!String(i.id).startsWith("livre:"))mostraNoticia(i);
   fica.add(i.id);
   if(!seen.has(i.id)){seen.add(i.id);registra([i.id],[])}
 }
@@ -976,7 +1019,7 @@ async function tocar(i,auto=true){
 }
 
 /* eventos */
-$("feed").addEventListener("click",e=>{
+$("feed").addEventListener("click",e=>{if(e.target.closest("#novo-est")){abreEnvioEstudo({id:"livre:"+Date.now(),titulo:"",nome:"Estudo próprio",tipo:"Estudo",quando:new Date().toISOString(),livre:true});return}
   if(arrastou){arrastou=false;return}
   const vt=e.target.closest(".voto");
   if(vt){const id=vt.dataset.id;lote=[];fica.add(id);

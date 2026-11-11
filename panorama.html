@@ -85,13 +85,14 @@ body{font-size:calc(16px * var(--esc))}
 .tam{display:flex;align-items:center;gap:10px}
 .tam button{font:inherit;font-weight:700;border:1px solid var(--line);background:none;color:var(--fg);border-radius:10px;width:46px;height:40px;cursor:pointer}
 .tam span{flex:1;text-align:center;font-size:14px;color:var(--muted)}
-.topo{display:block;width:100%;margin:10px 0 28px;padding:14px;border:0;border-radius:12px;background:var(--chip);color:var(--fg);font:inherit;font-weight:600;font-size:15px}
+.volta-topo{display:block;width:100%;margin:10px 0 28px;padding:14px;border:0;border-radius:12px;background:var(--chip);color:var(--fg);font:inherit;font-weight:600;font-size:15px}
 .tabs{margin:16px 0 4px}
 .tabs .rt{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
 .tabs .ab{display:flex;gap:8px;flex-wrap:wrap}
 .tabs .ab button,.tabs .sub button{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:999px;padding:8px 14px;cursor:pointer}
 .tabs .ab button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
-.tabs .sub{display:flex;gap:6px;margin:12px 0 8px}
+.tabs .sub{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 8px}
+.tabs .sub button{white-space:nowrap}
 .tabs .sub button{font-size:13px;padding:6px 12px;background:none;color:var(--muted)}
 .tabs .sub button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);border-color:transparent}
 .tb{width:100%;border-collapse:collapse;font-size:calc(13.5px * var(--esc));font-variant-numeric:tabular-nums;margin-top:8px;table-layout:fixed}
@@ -119,6 +120,33 @@ body{font-size:calc(16px * var(--esc))}
 .jg .l.v{color:var(--fg);font-weight:700}.jg .l.v b{font-weight:800}
 .jg .o{font-size:11.5px;color:var(--warn);margin-top:2px}
 .jg .dia{font-size:13px;color:var(--muted);margin-top:2px}
+.merc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}
+.merc div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px 12px;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px}
+.merc span{width:100%;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.merc b{font-size:16px;font-variant-numeric:tabular-nums}
+.merc i{font-style:normal;font-size:13px;font-weight:700}.merc i.up{color:var(--accent)}.merc i.dn{color:#C2453A}
+.pv,.rv{border:1px solid var(--line);border-radius:18px;padding:16px 16px 6px;margin:12px 0}
+.pv h2,.rv h2{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}
+.rv h2{color:var(--warn)}
+.pvi,.rvi{padding:0 0 12px;margin-bottom:12px;border-bottom:1px solid var(--line)}
+.pvi:last-child,.rvi:last-child{border-bottom:0;margin-bottom:0}
+.pvi span,.rvi span{display:block;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+.pvi b,.rvi b{display:block;font-size:calc(16px * var(--esc));line-height:1.4;margin:2px 0}
+.pvi p,.rvi p{margin:0;font-size:calc(14.5px * var(--esc));color:var(--muted)}
+.cont{font-style:normal;color:var(--warn);text-transform:none;letter-spacing:0}
+.antes{font-size:calc(14px * var(--esc));color:var(--muted);margin:0 0 8px}.antes b{color:var(--fg);font-weight:600}
+section.tema.fechado .corpo-t{display:none}
+.abrir-t,.lev-b,.lev-ok{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:999px;padding:8px 14px;cursor:pointer;margin:2px 0 8px}
+.lev{margin:6px 0 4px}.lev-b{color:var(--accent)}
+.lev-f textarea{width:100%;font:inherit;font-size:15px;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--card);color:var(--fg);margin:6px 0}
+.okmsg{font-size:14px;color:var(--accent);margin:6px 0}
+.dest.enx{gap:0;border-top:1px solid var(--line);margin-top:8px}
+.dest.enx .rt2{font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:10px 0 2px}
+.dest.enx .dt{border:0;border-bottom:1px solid var(--line);border-radius:0;background:none}
+.dest.enx .dt>button{padding:10px 0}
+.ext{font-style:normal;font-size:11px;font-weight:700;color:var(--warn);background:var(--warn-soft);border-radius:6px;padding:1px 5px}
+.fim .beta{display:block;margin-top:8px;font-size:12px;color:var(--faint)}
+.o.hj{color:var(--muted)}
 </style></head><body><div class="wrap">
 <div class="topo"><div><div class="eyebrow">Radar RSM</div><h1>Panorama do dia</h1><div class="meta" id="meta">Carregando…</div></div><a class="voltar" href="./">← Radar</a></div>
 <nav class="dias" id="dias" hidden></nav>
@@ -186,7 +214,15 @@ async function carregar(){
   catch(e){$("meta").textContent="";$("corpo").innerHTML='<div class="vazio">O primeiro Panorama ainda não foi gerado. Ele fica pronto todo dia às 6h.</div>';return}
   const g=new Date(P.gerado);
   $("meta").textContent=`${g.toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long"})} · ${g.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})} · ${P.itens} itens das últimas ${P.janela_h} h`;
-  $("corpo").innerHTML=`
+  $("corpo").innerHTML=P.beta?corpoBeta():corpoV1();
+  if(P.beta)desenhaMerc();
+  if(!$("tabs"))$("corpo").querySelector(".fim").insertAdjacentHTML("beforebegin",'<section class="tema" data-tema="Esportes"><div class="rot"><b>Esportes</b></div><div class="tabs" id="tabs"></div></section>');
+  tabelas();
+  temasLidos=new Set();vigiaTemas();
+  
+}
+/* versão 1 (até 11/11/2026): continua valendo para os dias sem "beta" */
+function corpoV1(){return `
     ${P.geral?`<div class="minuto" id="b-geral"><h2>Em 1 minuto</h2><p>${esc(P.geral)}</p></div>`:""}
     <nav class="indice">${P.temas.map(t=>`<a href="#${slug(t.tema)}">${esc(t.tema)}<span>${t.itens}</span></a>`).join("")}</nav>
     ${P.temas.map((t,ti)=>`<section class="tema" id="${slug(t.tema)}" data-tema="${esc(t.tema)}">
@@ -198,12 +234,47 @@ async function carregar(){
       <div class="fontes">Fontes: ${t.fontes.map(esc).join(", ")}</div>
       ${t.destaques.length?`<div class="dest">${t.destaques.map((d,di)=>`<div class="dt" data-t="${ti}" data-d="${di}"><button>${d.img?`<img src="${esc(d.img)}" alt="" loading="lazy">`:""}<div class="tt"><b>${esc(d.titulo)}</b><span>${esc(d.nome)} · ${esc(d.tipo)}${tempo(d.dur)?" de "+tempo(d.dur):""}</span>${d.motivo?`<em>${esc(d.motivo)}</em>`:""}</div></button><div class="abre" hidden></div></div>`).join("")}</div>`:""}
     </section>`).join("")}
-    <div class="fim"><b>Você está em dia.</b>O resto está no Radar, item por item.</div><button class="topo" id="topo" type="button">↑ Voltar ao topo</button>`;
-  if(!$("tabs"))$("corpo").querySelector(".fim").insertAdjacentHTML("beforebegin",'<section class="tema" data-tema="Esportes"><div class="rot"><b>Esportes</b></div><div class="tabs" id="tabs"></div></section>');
-  tabelas();
-  temasLidos=new Set();vigiaTemas();
-  
-}
+    <div class="fim"><b>Você está em dia.</b>O resto está no Radar, item por item.</div><button class="volta-topo" id="topo" type="button">↑ Voltar ao topo</button>`}
+/* BETA (desde 12/11/2026): Para você, números, continuação de ontem, temas compactos, destaques enxutos, revisão do Estudar, levar ao Estudar */
+function destaquesHtml(t,ti,enx){if(!t.destaques.length)return"";
+  if(!enx)return `<div class="dest">${t.destaques.map((d,di)=>`<div class="dt" data-t="${ti}" data-d="${di}"><button>${d.img?`<img src="${esc(d.img)}" alt="" loading="lazy">`:""}<div class="tt"><b>${esc(d.titulo)}</b><span>${esc(d.nome)} · ${esc(d.tipo)}${tempo(d.dur)?" de "+tempo(d.dur):""}</span>${d.motivo?`<em>${esc(d.motivo)}</em>`:""}</div></button><div class="abre" hidden></div></div>`).join("")}</div>`;
+  return `<div class="dest enx"><div class="rt2">Vale abrir</div>${t.destaques.map((d,di)=>`<div class="dt" data-t="${ti}" data-d="${di}"><button><div class="tt"><b>${esc(d.titulo)}</b><span>${esc(d.nome)}${tempo(d.dur)?" · "+tempo(d.dur):""}${d.motivo?" · "+esc(d.motivo):""}</span></div></button><div class="abre" hidden></div></div>`).join("")}</div>`}
+const fontesHtml=t=>`<div class="fontes">Fontes: ${t.fontes.map(n=>esc(n)+((t.externas||[]).includes(n)?' <i class="ext">externo</i>':"")).join(", ")}</div>`;
+function corpoBeta(){
+  const pv=(P.para_voce||[]).filter(x=>x&&x.fato),rv=(P.revisao||[]).filter(x=>x&&x.ideia);
+  return `
+    ${P.geral?`<div class="minuto" id="b-geral"><h2>Em 1 minuto</h2><p>${esc(P.geral)}</p></div>`:""}
+    <div class="merc" id="merc" hidden></div>
+    ${pv.length?`<div class="pv"><h2>Para você hoje</h2>${pv.map(x=>`<div class="pvi"><span>${esc(x.tema||"")}</span><b>${esc(x.fato)}</b><p>${esc(x.porque||"")}</p></div>`).join("")}</div>`:""}
+    ${rv.length?`<div class="rv"><h2>Do seu Estudar</h2>${rv.map(x=>`<div class="rvi"><span>${esc(x.estudo||"")}</span><b>${esc(x.ideia)}</b>${x.acao?`<p>Hoje: ${esc(x.acao)}</p>`:""}</div>`).join("")}</div>`:""}
+    <nav class="indice">${P.temas.map(t=>`<a href="#${slug(t.tema)}">${esc(t.tema)}<span>${t.itens}</span></a>`).join("")}</nav>
+    ${P.temas.map((t,ti)=>{const fech=ti>=3&&t.tema!=="Esportes";return `<section class="tema${fech?" fechado":""}" id="${slug(t.tema)}" data-tema="${esc(t.tema)}">
+      <div class="rot"><b>${esc(t.tema)}</b><span>${t.itens} itens${t.continua?' · <i class="cont">continuação</i>':""}</span></div>
+      <h3 id="b-m${ti}">${esc(t.manchete)}</h3>
+      <div class="corpo-t">
+      ${t.continua&&t.antes?`<p class="antes"><b>Até ontem:</b> ${esc(t.antes)}</p>`:""}
+      <p class="tx" id="b-t${ti}">${esc(t.texto)}</p>
+      ${t.divergencias?`<div class="diverg" id="b-d${ti}"><b>Atenção</b>${esc(t.divergencias)}</div>`:""}
+      ${t.tema==="Esportes"?'<div class="tabs" id="tabs"></div>':""}
+      ${fontesHtml(t)}
+      ${destaquesHtml(t,ti,true)}
+      <div class="lev"><button type="button" class="lev-b" data-t="${ti}">Levar para o Estudar</button><div class="lev-f" hidden><textarea rows="2" placeholder="O que você quer com este estudo? (opcional)"></textarea><button type="button" class="lev-ok" data-t="${ti}">Criar estudo</button></div></div>
+      </div>
+      ${fech?`<button type="button" class="abrir-t">Ler o tema</button>`:""}
+    </section>`}).join("")}
+    <div class="fim"><b>Você está em dia.</b>O resto está no Radar, item por item.<span class="beta">Panorama em versão beta de teste</span></div><button class="volta-topo" id="topo" type="button">↑ Voltar ao topo</button>`}
+function desenhaMerc(){const go=()=>{const el=$("merc");if(!el||!TB||!(TB.mercado||[]).length)return;
+  el.innerHTML=TB.mercado.map(m=>`<div><span>${esc(m.nome)}</span><b>${esc(m.valor)}</b>${m.var!=null?`<i class="${m.var>=0?"up":"dn"}">${m.var>=0?"+":""}${String(m.var).replace(".",",")}%</i>`:""}</div>`).join("");el.hidden=false};
+  if(TB)go();else setTimeout(()=>{go();if(!TB)setTimeout(go,1500)},800)}
+document.addEventListener("click",async e=>{
+  const ab=e.target.closest(".abrir-t");if(ab){const sec=ab.closest("section");sec.classList.remove("fechado");ab.remove();ev("pano_abrir_tema",DIA,{t:sec.dataset.tema});return}
+  const lb=e.target.closest(".lev-b");if(lb){const f=lb.nextElementSibling;f.hidden=!f.hidden;return}
+  const ok=e.target.closest(".lev-ok");if(ok){const t=P.temas[ok.dataset.t],f=ok.closest(".lev-f"),obj=f.querySelector("textarea").value.trim();
+    ok.disabled=true;ok.textContent="Enviando…";
+    const agora=new Date().toISOString(),o={id:"livre:"+Date.now(),titulo:t.manchete,nome:"Panorama · "+t.tema,tipo:"Estudo",quando:agora,salvoEm:agora,lista:"estudar",livre:true,
+      texto:(t.texto||"").slice(0,1500),intencao:obj||"Aprofundar este assunto do Panorama ("+t.tema+") e o que ele significa para mim.",est_cat:""};
+    try{await fetch("https://ntfy.sh/"+TOPICO+"-v",{method:"POST",body:JSON.stringify({s:[o]})});
+      ev("pano_estudar",DIA,{t:t.tema});f.innerHTML='<p class="okmsg">Pedido enviado. O estudo aparece no Estudar em alguns minutos.</p>'}catch(er){ok.disabled=false;ok.textContent="Tentar de novo"}}});
 /* tabelas de classificação (Esportes): abas que abrem só quando ele toca; dado de site/tabelas.json */
 let TB=null,TBsel={l:null,g:0};
 async function tabelas(){
@@ -214,10 +285,14 @@ function desenhaTab(){
   const el=$("tabs");if(!el)return;
   let h=`<div class="rt">Classificação</div><div class="ab">${TB.ligas.map(l=>`<button data-l="${l.id}" aria-pressed="${TBsel.l===l.id}">${esc(l.nome)}</button>`).join("")}</div>`;
   const L=TB.ligas.find(l=>l.id===TBsel.l);
-  if(L){const G=L.grupos[TBsel.g==="j"?0:TBsel.g]||L.grupos[0];
-    const J=L.jogos,emJ=TBsel.g==="j";
-    if(L.grupos.length>1||J)h+=`<div class="sub">${L.grupos.map((g,i)=>`<button data-g="${i}" aria-pressed="${!emJ&&g===G}">${esc(g.nome)}</button>`).join("")}${J?`<button data-g="j" aria-pressed="${emJ}">Jogos de ontem</button>`:""}</div>`;
-    if(emJ){const [a,m,d]=(J.data||"--").split("-");
+  if(L){const G=L.grupos[typeof TBsel.g==="number"?TBsel.g:0]||L.grupos[0];
+    const emH=TBsel.g==="h",HJ=P&&P.beta&&L.hoje&&L.hoje.lista.length?L.hoje:null;
+    const J=emH?null:L.jogos,emJ=TBsel.g==="j";
+    if(L.grupos.length>1||L.jogos)h+=`<div class="sub">${L.grupos.map((g,i)=>`<button data-g="${i}" aria-pressed="${!emJ&&!emH&&g===G}">${esc(g.nome)}</button>`).join("")}${L.jogos?`<button data-g="j" aria-pressed="${emJ}">Jogos de ontem</button>`:""}${HJ?`<button data-g="h" aria-pressed="${emH}">Jogos de hoje</button>`:""}</div>`;
+    if(emH&&HJ){h+=`<div class="dia">Hoje · ${HJ.lista.length} jogo${HJ.lista.length>1?"s":""} · horário de Brasília</div>
+        <div class="jg">${HJ.lista.map(j=>`<div class="j">${[j.casa,j.fora].map(t=>`<div class="l${t.v?" v":""}">${t.logo?`<img src="${esc(t.logo)}" alt="" loading="lazy" onerror="this.remove()">`:""}<span>${esc(t.time)}</span><b>${esc(t.pl)}</b></div>`).join("")}<div class="o hj">${esc(j.obs)}</div></div>`).join("")}</div>
+        <div class="leg"><span>Primeiro o time da casa</span></div>`}
+    else if(emJ){const [a,m,d]=(J.data||"--").split("-");
       h+=!J.lista.length?`<div class="dia">Nenhum jogo nos últimos dias.</div>`:`<div class="dia">${J.ontem?`Ontem, ${d}/${m}`:`Sem jogos ontem · últimos jogos em ${d}/${m}`} · ${J.lista.length} jogo${J.lista.length>1?"s":""}</div>
         <div class="jg">${J.lista.map(j=>`<div class="j">${[j.casa,j.fora].map(t=>`<div class="l${t.v?" v":""}">${t.logo?`<img src="${esc(t.logo)}" alt="" loading="lazy" onerror="this.remove()">`:""}<span>${esc(t.time)}</span><b>${esc(t.pl)}</b></div>`).join("")}${j.obs?`<div class="o">${esc(j.obs)}</div>`:""}</div>`).join("")}</div>
         <div class="leg"><span>Primeiro o time da casa</span></div>`}
@@ -231,7 +306,7 @@ function desenhaTab(){
   el.innerHTML=h}
 document.addEventListener("click",e=>{const t=e.target.closest("#tabs button");if(!t)return;e.stopPropagation();
   if(t.dataset.l){TBsel={l:TBsel.l===t.dataset.l?null:t.dataset.l,g:0};if(TBsel.l)ev("pano_tabela",DIA,{l:TBsel.l})}
-  else{TBsel.g=t.dataset.g==="j"?"j":+t.dataset.g;ev("pano_tabela",DIA,{l:TBsel.l,g:TBsel.g})}
+  else{TBsel.g=["j","h"].includes(t.dataset.g)?t.dataset.g:+t.dataset.g;ev("pano_tabela",DIA,{l:TBsel.l,g:TBsel.g})}
   desenhaTab()});
 async function resumoDe(d){
   try{
