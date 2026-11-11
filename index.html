@@ -48,6 +48,8 @@ h1 span{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--accent);
 .ref{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--bg);color:var(--fg);font-size:18px;line-height:1;cursor:pointer;display:grid;place-items:center}
 .ref.girando{animation:gira 1.2s linear infinite;color:var(--accent)}
 @keyframes gira{to{transform:rotate(360deg)}}
+.emdia{font-size:14px;color:var(--muted);background:var(--chip);border-radius:12px;padding:12px 14px;margin:0 0 12px;line-height:1.45}
+.emdia b{color:var(--fg);display:block;font-size:15px}
 .aviso{font-size:13px;color:var(--accent);background:var(--accent-soft);border-radius:8px;padding:8px 12px;margin:0 0 10px}
 .modo{display:inline-flex;background:var(--chip);border-radius:99px;padding:3px;margin-bottom:8px}
 .modo button{font-weight:600;font-size:12.5px;border:0;background:none;color:var(--muted);padding:5px 11px;border-radius:99px;cursor:pointer}
@@ -317,6 +319,7 @@ h1 span{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--accent);
       <div class="hr"><div class="st" id="st">carregando…</div><button class="ref rel-btn" id="m-rel" aria-pressed="false" aria-label="Relatório de uso" title="Relatório"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><button class="ref" id="ref" aria-label="Atualizar agora" title="Atualizar agora">↻</button></div>
     </header>
     <div class="aviso" id="aviso" hidden></div>
+    <div class="emdia" id="emdia" hidden></div>
     <div class="linha-modo">
       <div class="modo" id="modo" role="group" aria-label="Organizar por">
         <button data-m="tema" aria-pressed="true">Temas</button>
@@ -351,7 +354,7 @@ h1 span{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--accent);
 </section>
 
 <script>
-const VERSAO = "0d2226bdb7";
+const VERSAO = "08c8bb73ed";
 /* se existir versão nova do app publicada, recarrega sem usar a cópia guardada */
 async function confereVersao(){
   try{const r=await fetch("versao.txt?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const v=(await r.text()).trim();
@@ -615,6 +618,19 @@ let verRecolhidos=false;
 const AS=()=>(DATA&&DATA.assuntos)||{};
 const jaViuAssunto=i=>!!(i.as&&AS()[i.as]&&AS()[i.as].ids.some(id=>id!==i.id&&seen.has(id)));
 const repSemNov=i=>!seen.has(i.id)&&!i.nov&&jaViuAssunto(i);
+/* contra as "olhadinhas": avisa quando não chegou nada desde a última visita e quando é a próxima coleta (de hora em hora, 5h–0h) */
+let VIS=null;try{VIS=JSON.parse(localStorage.getItem("radar-visita")||"null")}catch(e){}
+function emDia(novos){const el=$("emdia");if(!el)return;
+  if(modo==="relatorio"||ehLista()){el.hidden=true;return}
+  const hh=d=>d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+  const p=new Date();p.setMinutes(0,0,0);p.setHours(p.getHours()+1);if(p.getHours()>=1&&p.getHours()<5)p.setHours(5);
+  let t="";
+  if(VIS&&VIS.at===DATA.atualizado&&Date.now()-VIS.t>60000)t=`Nada novo desde sua última visita, às ${hh(new Date(VIS.t))}.`;
+  else if(!novos)t="Você está em dia.";
+  if(!t){el.hidden=true;return}
+  el.innerHTML=`<b>${t}</b>Próxima coleta às ${hh(p)}.${novos?` Ainda há ${novos} ${novos>1?"itens":"item"} que você não viu.`:""}`;el.hidden=false;
+  if(VIS&&VIS.at===DATA.atualizado)ev("emdia",null,{n:novos})}
+function guardaVisita(){if(!DATA)return;VIS=null;try{localStorage.setItem("radar-visita",JSON.stringify({at:DATA.atualizado,t:Date.now()}))}catch(e){}}
 function render(){
   if(!DATA)return;
   const ehRel=modo==="relatorio";
@@ -624,6 +640,7 @@ function render(){
   const novos=DATA.itens.filter(i=>!seen.has(i.id)&&!repSemNov(i)).length;
   const at=new Date(DATA.atualizado);
   $("st").innerHTML=`atualizado ${at.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})}<br><b>${novos}</b> novos`;
+  emDia(novos);
   for(const l of ["depois","estudar"]){const n=[...salvos.values()].filter(o=>o.lista===l).length;$("m-"+l).innerHTML=ICON[l]+NOME_L[l]+(n?` ${n}`:"")}
   $("chips").hidden=modo==="depois"||(modo==="estudar"&&!catsEstudo().size);$("sub").hidden=ehLista();
   const bN=document.querySelector('#fmt [data-f="novos"]');bN.hidden=ehLista();
@@ -1055,9 +1072,9 @@ let ultimaCarga=Date.now();
 let ativoMs=0,tickEm=Date.now(),naSessao=true;ev("app");
 const passo=()=>{const n=Date.now(),d=n-tickEm;if(!document.hidden&&d<60000)ativoMs+=d;tickEm=n};
 setInterval(passo,15000);
-const voltou=()=>{if(naSessao){tickEm=Date.now();return}naSessao=true;ativoMs=0;tickEm=Date.now();ev("app")};
+const voltou=()=>{if(naSessao){tickEm=Date.now();return}naSessao=true;try{VIS=JSON.parse(localStorage.getItem("radar-visita")||"null")}catch(e){}if(DATA&&modo!=="relatorio")emDia(DATA.itens.filter(i=>!seen.has(i.id)&&!repSemNov(i)).length);ativoMs=0;tickEm=Date.now();ev("app")};
 window.addEventListener("pageshow",()=>{if(!document.hidden)voltou()});window.addEventListener("focus",()=>{if(!document.hidden)voltou()});
-document.addEventListener("visibilitychange",()=>{if(document.hidden){if(!naSessao)return;passo();naSessao=false;saiuEm=Date.now();ev("sai",null,{s:Math.round(ativoMs/1000)});ativoMs=0;if(abertoId)registraFecho();enviaEv();return}
+document.addEventListener("visibilitychange",()=>{if(document.hidden){if(!naSessao)return;passo();naSessao=false;guardaVisita();saiuEm=Date.now();ev("sai",null,{s:Math.round(ativoMs/1000)});ativoMs=0;if(abertoId)registraFecho();enviaEv();return}
   voltou();confereVersao();carregaIndice();if(saiuEm&&Date.now()-saiuEm>10*60000){limpaFica();render()}vigiaFila();sincroniza();if(Date.now()-ultimaCarga>3*60000){ultimaCarga=Date.now();carregar()}});
 confereVersao();carregar().then(sincroniza);carregaIndice();carregaEstudo();vigiaFila();
 setInterval(()=>{if(!document.hidden){carregaIndice();carregaEstudo()}},90000);
