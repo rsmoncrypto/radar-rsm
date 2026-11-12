@@ -397,7 +397,16 @@ u.ue{background:var(--accent)}u.up{background:color-mix(in srgb,var(--accent) 45
 </section>
 
 <script>
-const VERSAO = "50f7a00e17";
+/* diagnóstico (12/11/2026): se algo quebrar ao abrir, mostra o erro na tela em vez de ficar em branco */
+(function(){const t0=Date.now();const mostra=t=>{try{if(Date.now()-t0>20000)return;let d=document.getElementById("diag");if(!d){d=document.createElement("div");d.id="diag";d.style.cssText="position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:99999;background:#9A1F1F;color:#fff;font:13px/1.4 -apple-system,sans-serif;padding:12px 14px;border-radius:12px;white-space:pre-wrap";
+  d.innerHTML='<b>O Radar encontrou um erro ao abrir.</b> Tire um print e mande ao Claude.\n<span></span>\n<button style="margin-top:8px;font:inherit;font-weight:700;border:0;border-radius:8px;padding:8px 12px">Recarregar</button>';
+  d.querySelector("button").onclick=()=>location.reload();(document.body||document.documentElement).appendChild(d)}d.querySelector("span").textContent+=t+"\n"}catch(e){}};
+ window.addEventListener("error",e=>mostra((e.message||"erro")+" · linha "+(e.lineno||"?")+":"+(e.colno||"?")));
+ window.addEventListener("unhandledrejection",e=>mostra("promessa: "+((e.reason&&(e.reason.message||e.reason))||"?")));
+ setTimeout(()=>{try{if(!document.querySelector(".li,.msg,.pn,.rel,.vazio")&&!document.getElementById("diag"))mostra("O feed não apareceu em 12 s (sem erro de código). Pode ser internet lenta.")}catch(e){}},12000)})();
+</script>
+<script>
+const VERSAO = "fae229a623";
 /* se existir versão nova do app publicada, recarrega sem usar a cópia guardada */
 async function confereVersao(){
   try{const r=await fetch("versao.txt?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const v=(await r.text()).trim();
