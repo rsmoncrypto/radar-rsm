@@ -413,11 +413,13 @@ u.ue{background:var(--accent)}u.up{background:color-mix(in srgb,var(--accent) 45
 </section>
 
 <script>
-const VERSAO = "8c4b27246a";
+const VERSAO = "213b3e587b";
 /* se existir versão nova do app publicada, recarrega sem usar a cópia guardada */
 async function confereVersao(){
   try{const r=await fetch("versao.txt?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const v=(await r.text()).trim();
-    if(v&&!VERSAO.startsWith("__")&&v!==VERSAO&&!abertoId){location.replace(location.pathname+"?v="+v)}}catch(e){}
+    if(v&&!VERSAO.startsWith("__")&&v!==VERSAO&&!abertoId){let ja="";try{ja=sessionStorage.getItem("radar-recarga")||""}catch(e){}
+      if(ja===v)return;/* já tentou carregar esta versão: não insiste (evita laço de recarga com cópia antiga em cache) */
+      try{sessionStorage.setItem("radar-recarga",v)}catch(e){}location.replace(location.pathname+"?v="+v+"&t="+Date.now())}}catch(e){}
 }
 const TOPICO = "radar-rsm-120cf1e02de4f9d7";
 const TEMAS=["Cripto","Finanças","IA e tecnologia","Saúde e ciência","Mundo","Carros elétricos","Esportes","Negócios","Curiosidades","Filosofia","Viagem"];
@@ -666,7 +668,7 @@ function lista(){
     const atual=new Map(DATA.itens.map(i=>[i.id,i]));
     const est=modo==="estudar",ord=i=>i.est_cat?"0"+estLab(i):"1";
     return [...salvos.values()].filter(o=>o.lista===modo).map(o=>({...o,...(atual.get(o.id)||{}),salvoEm:o.salvoEm}))
-      .filter(i=>fmt==="tudo"||fmt==="novos"?(fmt!=="novos"||!seen.has(i.id)):i.formato===fmt)
+      .filter(i=>String(i.id).startsWith("livre:")||(fmt==="tudo"||fmt==="novos"?(fmt!=="novos"||!seen.has(i.id)):i.formato===fmt))
       .filter(i=>!est||estCat==="Todos"||(estCat==="Sem categoria"?!i.est_cat:i.est_cat===estCat&&(estSub==="Todos"||i.est_sub===estSub)))
       .sort((a,b)=>(est?ord(a).localeCompare(ord(b)):0)||(b.salvoEm||"").localeCompare(a.salvoEm||""));
   }

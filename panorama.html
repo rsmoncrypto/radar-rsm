@@ -147,6 +147,10 @@ section.tema.fechado .corpo-t{display:none}
 .ext{font-style:normal;font-size:11px;font-weight:700;color:var(--warn);background:var(--warn-soft);border-radius:6px;padding:1px 5px}
 .fim .beta{display:block;margin-top:8px;font-size:12px;color:var(--faint)}
 .o.hj{color:var(--muted)}
+.lev-c{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px;align-items:center}.lev-c small{width:100%;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lev-c button{font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:999px;padding:6px 11px}
+.lev-c button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.lev-nc{font:inherit;font-size:13px;border:1px solid var(--line);border-radius:999px;padding:6px 11px;background:var(--card);color:var(--fg);width:160px}
 </style></head><body><div class="wrap">
 <div class="topo"><div><div class="eyebrow">Radar RSM</div><h1>Panorama do dia</h1><div class="meta" id="meta">Carregando…</div></div><a class="voltar" href="./">← Radar</a></div>
 <nav class="dias" id="dias" hidden></nav>
@@ -258,7 +262,7 @@ function corpoBeta(){
       ${t.tema==="Esportes"?'<div class="tabs" id="tabs"></div>':""}
       ${fontesHtml(t)}
       ${destaquesHtml(t,ti,true)}
-      <div class="lev"><button type="button" class="lev-b" data-t="${ti}">Levar para o Estudar</button><div class="lev-f" hidden><textarea rows="2" placeholder="O que você quer com este estudo? (opcional)"></textarea><button type="button" class="lev-ok" data-t="${ti}">Criar estudo</button></div></div>
+      <div class="lev"><button type="button" class="lev-b" data-t="${ti}">Levar para o Estudar</button><div class="lev-f" hidden><textarea rows="2" placeholder="O que você quer com este estudo? (opcional)"></textarea><div class="lev-c"></div><button type="button" class="lev-ok" data-t="${ti}">Criar estudo</button></div></div>
       </div>
       ${fech?`<button type="button" class="abrir-t">Ler o tema</button>`:""}
     </section>`}).join("")}
@@ -268,13 +272,21 @@ function desenhaMerc(){const go=()=>{const el=$("merc");if(!el||!TB||!(TB.mercad
   if(TB)go();else setTimeout(()=>{go();if(!TB)setTimeout(go,1500)},800)}
 document.addEventListener("click",async e=>{
   const ab=e.target.closest(".abrir-t");if(ab){const sec=ab.closest("section");sec.classList.remove("fechado");ab.remove();ev("pano_abrir_tema",DIA,{t:sec.dataset.tema});return}
-  const lb=e.target.closest(".lev-b");if(lb){const f=lb.nextElementSibling;f.hidden=!f.hidden;return}
+  const lb=e.target.closest(".lev-b");if(lb){const f=lb.nextElementSibling;f.hidden=!f.hidden;if(!f.hidden)desenhaCats(f.querySelector(".lev-c"));return}
+  const cb=e.target.closest(".lev-c button");if(cb){const box=cb.parentElement;box.dataset.cat=box.dataset.cat===cb.dataset.c?"":cb.dataset.c;desenhaCats(box);return}
   const ok=e.target.closest(".lev-ok");if(ok){const t=P.temas[ok.dataset.t],f=ok.closest(".lev-f"),obj=f.querySelector("textarea").value.trim();
     ok.disabled=true;ok.textContent="Enviando…";
     const agora=new Date().toISOString(),o={id:"livre:"+Date.now(),titulo:t.manchete,nome:"Panorama · "+t.tema,tipo:"Estudo",quando:agora,salvoEm:agora,lista:"estudar",livre:true,
-      texto:(t.texto||"").slice(0,1500),intencao:obj||"Aprofundar este assunto do Panorama ("+t.tema+") e o que ele significa para mim.",est_cat:""};
+      texto:(t.texto||"").slice(0,1500),intencao:obj||"Aprofundar este assunto do Panorama ("+t.tema+") e o que ele significa para mim.",est_cat:catEscolhida(f)};
     try{await fetch("https://ntfy.sh/"+TOPICO+"-v",{method:"POST",body:JSON.stringify({s:[o]})});
       ev("pano_estudar",DIA,{t:t.tema});f.innerHTML='<p class="okmsg">Pedido enviado. O estudo aparece no Estudar em alguns minutos.</p>'}catch(er){ok.disabled=false;ok.textContent="Tentar de novo"}}});
+/* categorias do Estudar (as mesmas do app), para o "Levar para o Estudar" */
+let CATS=null;
+async function carregaCats(){if(CATS)return CATS;CATS=[];try{const r=await fetch("vistos.json?t="+Date.now(),{cache:"no-store"});if(r.ok){const v=await dec(r);
+  CATS=[...new Set((v.salvos||[]).filter(o=>o.lista==="estudar"&&o.est_cat).map(o=>o.est_cat))].sort((a,b)=>a.localeCompare(b))}}catch(e){}return CATS}
+async function desenhaCats(box){const cs=await carregaCats();const sel=box.dataset.cat||"";
+  box.innerHTML=`<small>Categoria</small>${cs.map(c=>`<button type="button" data-c="${esc(c)}" aria-pressed="${c===sel}">${esc(c)}</button>`).join("")}<input class="lev-nc" placeholder="+ nova categoria" maxlength="40">`}
+function catEscolhida(f){const box=f.querySelector(".lev-c");const nc=box&&box.querySelector(".lev-nc");return (nc&&nc.value.trim())||(box&&box.dataset.cat)||""}
 /* tabelas de classificação (Esportes): abas que abrem só quando ele toca; dado de site/tabelas.json */
 let TB=null,TBsel={l:null,g:0};
 async function tabelas(){
