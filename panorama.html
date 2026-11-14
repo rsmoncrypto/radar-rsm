@@ -283,7 +283,8 @@ function corpoBeta(){
 function desenhaBtc(){const go=()=>{const el=$("btcm");if(!el||!TB||!TB.btc)return;const B=TB.btc,f=v=>"US$ "+Number(v).toLocaleString("pt-BR"),pc=v=>(v>=0?"+":"")+String(v).replace(".",",")+"%";
   if(!B.linhas){el.innerHTML="";return}
   const M=B.mvrv,nv=v=>String(v.toFixed(2)).replace(".",",");
-  const zonas=M?[["Topo do ciclo","acima de 3,5",3.5,"topos de 2013, 2017 e 2021"],["Aquecido","2 a 3,5",2,"meio de ciclo de alta"],["Neutro / correção","1 a 2",1,"maior parte do tempo"],["Capitulação","abaixo de 1",0,"fundos de 2015, 2018 e 2022"]]:[];
+  const R=M?M.realizado:0,mil=v=>Math.round(v/1000)+" mil";
+  const zonas=M?[["Topo do ciclo","> 3,5","> "+mil(3.5*R),"topos de 2013, 2017 e 2021"],["Aquecido","2–3,5",mil(2*R)+"–"+mil(3.5*R).replace(" mil",""),"meio de ciclo de alta"],["Neutro / correção","1–2",mil(R).replace(" mil","")+"–"+mil(2*R),"maior parte do tempo"],["Capitulação","< 1","< "+mil(R),"fundos de 2015, 2018 e 2022"]]:[];
   const zAtual=M?(M.valor>=3.5?0:M.valor>=2?1:M.valor>=1?2:3):-1;
   el.innerHTML=`<details><summary>Bitcoin: preço, médias e MVRV</summary><div class="bp">Preço agora <b>${f(B.preco)}</b></div>
    <div class="rt3">Preço e médias</div>
@@ -291,8 +292,8 @@ function desenhaBtc(){const go=()=>{const el=$("btcm");if(!el||!TB||!TB.btc)retu
    <div class="at">"Preço" = quanto o preço está acima (+) ou abaixo (−) de cada linha. Médias citadas por Augusto Backes, Investidor 4.20 e Criptomaníacos.</div>
    ${M?`<div class="rt3">MVRV · Fundo de capitulação</div>
    <div class="mv"><div><span>MVRV agora</span><b>${nv(M.valor)}</b></div><div><span>Preço realizado</span><b>${f(M.realizado)}</b><small>preço ${pc(M.dist)}</small></div></div>
-   <table class="tb bt mvz"><colgroup><col><col style="width:78px"><col style="width:86px"></colgroup><thead><tr><th class="tm">Zona</th><th>MVRV</th><th>Preço equiv.</th></tr></thead><tbody>${zonas.map((z,k)=>`<tr class="${k===zAtual?"aqui":""}"><td class="tm">${k===zAtual?"● ":""}${z[0]}<small>${z[3]}</small></td><td>${z[1]}</td><td>${z[2]?f(Math.round(z[2]*M.realizado)):"< "+f(M.realizado)}</td></tr>`).join("")}</tbody></table>
-   <div class="at">MVRV = preço ÷ preço realizado (custo médio de todos os donos de bitcoin). "Preço equiv." = onde o Bitcoin estaria em cada zona hoje. CoinMetrics, dado diário de ${M.data.split("-").reverse().slice(0,2).join("/")}.</div>`:""}
+   <table class="tb bt mvz"><colgroup><col><col style="width:52px"><col style="width:108px"></colgroup><thead><tr><th class="tm">Zona</th><th>MVRV</th><th>Preço equiv.</th></tr></thead><tbody>${zonas.map((z,k)=>`<tr class="${k===zAtual?"aqui":""}"><td class="tm">${k===zAtual?"● ":""}${z[0]}<small>${z[3]}</small></td><td>${z[1]}</td><td>US$ ${z[2]}</td></tr>`).join("")}</tbody></table>
+   <div class="at">MVRV = preço ÷ preço realizado (custo médio de todos os donos de bitcoin). "Preço equiv." = faixa de preço do Bitcoin que corresponde a cada zona hoje. CoinMetrics, dado diário de ${M.data.split("-").reverse().slice(0,2).join("/")}.</div>`:""}
    </details>`;
   el.querySelector("details").addEventListener("toggle",ev2=>{if(ev2.target.open)ev("pano_btc",DIA)})};
   if(TB)go();else setTimeout(()=>{go();if(!TB)setTimeout(go,1500)},800)}
