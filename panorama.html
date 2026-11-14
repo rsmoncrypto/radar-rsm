@@ -151,6 +151,11 @@ section.tema.fechado .corpo-t{display:none}
 .lev-c button{font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:999px;padding:6px 11px}
 .lev-c button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);border-color:transparent}
 .lev-nc{font:inherit;font-size:13px;border:1px solid var(--line);border-radius:999px;padding:6px 11px;background:var(--card);color:var(--fg);width:160px}
+.btcm details{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:10px 0;background:var(--card)}
+.btcm summary{cursor:pointer;font-weight:700;font-size:14.5px;color:var(--accent)}
+.btcm .bp{margin:8px 0 2px;font-size:14px;color:var(--muted)}.btcm .bp b{color:var(--fg);font-size:17px}
+.tb.bt td.tm small{display:block;font-size:11px;font-weight:500;color:var(--faint);white-space:normal}
+.tb.bt td.tm{white-space:normal}.tb.bt td.up{color:var(--accent);font-weight:700}.tb.bt td.dn{color:#C2453A;font-weight:700}
 </style></head><body><div class="wrap">
 <div class="topo"><div><div class="eyebrow">Radar RSM</div><h1>Panorama do dia</h1><div class="meta" id="meta">Carregando…</div></div><a class="voltar" href="./">← Radar</a></div>
 <nav class="dias" id="dias" hidden></nav>
@@ -219,7 +224,7 @@ async function carregar(){
   const g=new Date(P.gerado);
   $("meta").textContent=`${g.toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long"})} · ${g.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})} · ${P.itens} itens das últimas ${P.janela_h} h`;
   $("corpo").innerHTML=P.beta?corpoBeta():corpoV1();
-  if(P.beta)desenhaMerc();
+  if(P.beta){desenhaMerc();desenhaBtc()}
   if(!$("tabs"))$("corpo").querySelector(".fim").insertAdjacentHTML("beforebegin",'<section class="tema" data-tema="Esportes"><div class="rot"><b>Esportes</b></div><div class="tabs" id="tabs"></div></section>');
   tabelas();
   temasLidos=new Set();vigiaTemas();
@@ -260,6 +265,7 @@ function corpoBeta(){
       <p class="tx" id="b-t${ti}">${esc(t.texto)}</p>
       ${t.divergencias?`<div class="diverg" id="b-d${ti}"><b>Atenção</b>${esc(t.divergencias)}</div>`:""}
       ${t.tema==="Esportes"?'<div class="tabs" id="tabs"></div>':""}
+      ${t.tema==="Cripto"?'<div class="btcm" id="btcm"></div>':""}
       ${fontesHtml(t)}
       ${destaquesHtml(t,ti,true)}
       <div class="lev"><button type="button" class="lev-b" data-t="${ti}">Levar para o Estudar</button><div class="lev-f" hidden><textarea rows="2" placeholder="O que você quer com este estudo? (opcional)"></textarea><div class="lev-c"></div><button type="button" class="lev-ok" data-t="${ti}">Criar estudo</button></div></div>
@@ -267,6 +273,13 @@ function corpoBeta(){
       ${fech?`<button type="button" class="abrir-t">Ler o tema</button>`:""}
     </section>`}).join("")}
     <div class="fim"><b>Você está em dia.</b>O resto está no Radar, item por item.<span class="beta">Panorama em versão beta de teste</span></div><button class="volta-topo" id="topo" type="button">↑ Voltar ao topo</button>`}
+/* Bitcoin: preço e as médias móveis que Augusto Backes, Investidor 4.20 e Criptomaníacos citam (abre com um toque) */
+function desenhaBtc(){const go=()=>{const el=$("btcm");if(!el||!TB||!TB.btc)return;const B=TB.btc,f=v=>"US$ "+Number(v).toLocaleString("pt-BR");
+  el.innerHTML=`<details><summary>Bitcoin: preço e médias móveis</summary><div class="bp">Preço agora <b>${f(B.preco)}</b></div>
+   <table class="tb bt"><colgroup><col><col style="width:96px"><col style="width:62px"></colgroup><thead><tr><th class="tm">Média</th><th>Valor</th><th>Preço</th></tr></thead><tbody>${B.medias.map(m=>`<tr><td class="tm">${esc(m.nome)}<small>${esc(m.quem)}</small></td><td>${f(m.valor)}</td><td class="${m.dist>=0?"up":"dn"}">${m.dist>=0?"+":""}${String(m.dist).replace(".",",")}%</td></tr>`).join("")}</tbody></table>
+   <div class="at">"Preço" = quanto o preço está acima (+) ou abaixo (−) de cada média. Fonte: Yahoo Finance, de hora em hora.</div></details>`;
+  el.querySelector("details").addEventListener("toggle",ev2=>{if(ev2.target.open)ev("pano_btc",DIA)})};
+  if(TB)go();else setTimeout(()=>{go();if(!TB)setTimeout(go,1500)},800)}
 function desenhaMerc(){const go=()=>{const el=$("merc");if(!el||!TB||!(TB.mercado||[]).length)return;
   el.innerHTML=TB.mercado.map(m=>`<div><span>${esc(m.nome)}</span><b>${esc(m.valor)}</b>${m.var!=null?`<i class="${m.var>=0?"up":"dn"}">${m.var>=0?"+":""}${String(m.var).replace(".",",")}%</i>`:""}</div>`).join("");el.hidden=false};
   if(TB)go();else setTimeout(()=>{go();if(!TB)setTimeout(go,1500)},800)}
