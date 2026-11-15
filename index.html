@@ -379,7 +379,7 @@ u.ue{background:var(--accent)}u.up{background:color-mix(in srgb,var(--accent) 45
     var t="rr"+hex(await crypto.subtle.digest("SHA-256",m)).slice(0,24);return {k:k,t:t}}
   async function confere(k){
     var r=await fetch("radar.json?t="+Date.now(),{cache:"no-store"});var txt=await r.text();if(!txt.startsWith("RR1:"))return false;
-    var b=Uint8Array.from(atob(txt.slice(4,4+4000*4/3|0).replace(/=+$/,"")),function(c){return c.charCodeAt(0)});
+    var b=Uint8Array.from(atob(txt.slice(4,68)),function(c){return c.charCodeAt(0)});
     var key=new Uint8Array(k.match(/../g).map(function(h){return parseInt(h,16)})),blk=new Uint8Array(key.length+4);blk.set(key);var dv=new DataView(blk.buffer);
     dv.setUint32(key.length,0);var h=new Uint8Array(await crypto.subtle.digest("SHA-256",blk.slice()));
     return ((b[0]^h[0])===0x78)}  /* início de um bloco zlib: só a chave certa revela */
@@ -455,7 +455,7 @@ u.ue{background:var(--accent)}u.up{background:color-mix(in srgb,var(--accent) 45
 </section>
 
 <script type="text/radar">
-const VERSAO = "e6283d11dc";
+const VERSAO = "076ea2f724";
 /* se existir versão nova do app publicada, recarrega sem usar a cópia guardada */
 async function confereVersao(){
   try{const r=await fetch("versao.txt?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const v=(await r.text()).trim();
