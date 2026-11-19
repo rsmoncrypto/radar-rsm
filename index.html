@@ -343,6 +343,56 @@ u.ue{background:var(--accent)}u.up{background:color-mix(in srgb,var(--accent) 45
 .est-aviso p{font-size:15px;margin:4px 0}.est-aviso .bt2{display:flex;gap:8px;margin-top:12px}.est-aviso .bt2 button{flex:1;border:0;border-radius:10px;padding:12px;font:inherit;font-weight:600}
 .est-aviso .pri{background:var(--accent);color:#fff}.est-aviso .sec{background:var(--bg);color:var(--fg)}
 .rel .medias{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.rel .medias div{background:var(--chip);border-radius:12px;padding:10px 12px;min-width:0}.rel .medias b{display:block;font-size:20px;font-variant-numeric:tabular-nums}.rel .medias span{font-size:12px;color:var(--muted)}
+/* Estudar em blocos (19/11/2026, 08h) */
+.pe-k{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 16px}
+.pe-k div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}.pe-k b{display:block;font-size:24px;font-variant-numeric:tabular-nums}.pe-k span{font-size:12.5px;color:var(--muted)}
+.pe-k .al{background:var(--warn-soft);border-color:transparent}.pe-k .al b{color:var(--warn)}
+.pe-h{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px;font-weight:700}
+.pe-g{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+.pe-gb{display:flex;align-items:flex-end;gap:10px;height:90px}.pe-gb>div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;align-items:stretch;position:relative}
+.pe-gb u{display:block;text-decoration:none}.pe-gb .uv{background:var(--accent);border-radius:4px 4px 0 0}.pe-gb .ua{background:#8FB3F2}
+.pe-gb em{position:absolute;bottom:-18px;left:0;right:0;text-align:center;font-style:normal;font-size:11px;color:var(--muted)}
+.pe-lg{display:flex;gap:14px;font-size:12px;color:var(--muted);margin-top:24px;flex-wrap:wrap}.pe-lg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.pe-ar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.ec b{font-size:16px}.ec .tg{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.ec .tg span{font-size:12px;font-weight:600;border-radius:999px;padding:3px 9px;background:var(--accent-soft);color:var(--accent)}.ec .tg span.al{background:var(--warn-soft);color:var(--warn)}
+.ec.parado{border-style:dashed}
+.bl-q{background:var(--card);border:1.5px solid var(--accent);border-radius:16px;padding:14px;margin:0 0 12px}
+.bl-q .rot{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.bl-q .rot span{font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.bl-q h3{font-size:20px;line-height:1.25;margin:6px 0 10px}
+.bl-q .prop{font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:-4px 0 10px}
+.bl-q .prop button,.bl-q .rot button{font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:999px;padding:6px 11px;cursor:pointer}
+.bl-q .rot button{border:0;background:none;color:var(--accent);padding:6px 2px}
+.bl-q .prop .pq-usar{background:var(--accent);color:var(--bg);border-color:transparent}
+.bl-r{background:var(--accent-soft);border-radius:12px;padding:10px 12px}.bl-r small{display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.bl-r ul{margin:0;padding-left:18px}.bl-r li{font-size:14.5px;margin:3px 0;line-height:1.4}
+details.bl{background:var(--card);border:1px solid var(--line);border-radius:14px;margin:0 0 12px;padding:0 14px}
+details.bl>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 0;min-height:24px}
+details.bl>summary::-webkit-details-marker{display:none}
+details.bl>summary b{font-size:15px}details.bl>summary small{display:block;font-size:12.5px;color:var(--muted);font-weight:400}
+details.bl>summary::after{content:"›";font-size:20px;color:var(--muted);transition:transform .15s}details.bl[open]>summary::after{transform:rotate(90deg)}
+details.bl>.in{padding:0 0 14px}
+details.bl.novos{border-color:var(--warn)}details.bl .cnt{font-size:12px;font-weight:700;background:var(--warn-soft);color:var(--warn);border-radius:999px;padding:2px 8px;margin-left:6px}
+.sq{display:flex;gap:8px;align-items:stretch;margin:8px 0}
+.sq .sug-q{flex:1;font:inherit;font-size:13.5px;text-align:left;line-height:1.35;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:10px;padding:9px 11px;cursor:pointer}
+.sq .sug-q[aria-pressed="true"]{border:1.5px solid var(--accent);background:var(--accent-soft)}
+.sq .sug-ok{font:inherit;font-size:13px;font-weight:700;border:0;border-radius:10px;padding:0 12px;background:var(--accent);color:var(--bg);cursor:pointer}
+.bl-x{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.bl-x>button{font:inherit;font-size:13px;font-weight:600;border:1px dashed var(--line);background:none;color:var(--muted);border-radius:999px;padding:7px 12px;cursor:pointer}
+.lt-lg{display:flex;gap:14px;font-size:12px;color:var(--muted);margin:0 0 10px;flex-wrap:wrap}
+.lt-lg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.dv{background:var(--accent)}.da{background:var(--card);border:2px solid #2F55C9;width:8px!important;height:8px!important}
+.lt{border-left:2px solid var(--line);margin-left:5px;padding-left:14px}
+.lt-i{position:relative;margin:0 0 14px}.lt-i>.pt{position:absolute;left:-20px;top:5px;width:10px;height:10px;border-radius:50%}
+.lt-i.auto{background:#F4F7FF;border-radius:10px;padding:8px 10px;margin-left:-4px}.lt-i.auto>.pt{left:-16px;top:12px}
+@media (prefers-color-scheme:dark){.lt-i.auto{background:#1B2233}}
+.lt-h{display:flex;justify-content:space-between;align-items:center;gap:8px}.lt-h span{font-size:12px;color:var(--muted);font-weight:600}
+.lt-i.auto .lt-h span{color:#2F55C9}
+.rm-x{font:inherit;font-size:18px;line-height:1;border:0;background:none;color:var(--muted);padding:4px 8px;cursor:pointer}
+.rm-c{font-size:13px;display:flex;gap:6px;align-items:center}.rm-c button{font:inherit;font-size:12.5px;font-weight:600;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:999px;padding:4px 10px;cursor:pointer}
+.rm-c .rm-sim{background:var(--bad,#C2453A);color:#fff;border-color:transparent}
+.lt-i>b{display:block;font-size:14px;line-height:1.35;margin:2px 0}
+.lt-m{font-size:12.5px;color:var(--warn);font-weight:600;margin-top:3px}
 /* Estudar v2 (19/11/2026) */
 .ec{all:unset;box-sizing:border-box;display:block;width:100%;cursor:pointer;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:0 0 10px}
 .ec b{display:block;font-size:16px;line-height:1.3;margin:2px 0 4px}.ec-c{font-size:12px;color:var(--muted);font-weight:600}
@@ -477,7 +527,7 @@ u.ue{background:var(--accent)}u.up{background:color-mix(in srgb,var(--accent) 45
 </section>
 
 <script type="text/radar">
-const VERSAO = "7124e0b646";
+const VERSAO = "8a1720b11d";
 /* se existir versão nova do app publicada, recarrega sem usar a cópia guardada */
 async function confereVersao(){
   try{const r=await fetch("versao.txt?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const v=(await r.text()).trim();
@@ -859,7 +909,7 @@ function render(){
   if(modo==="estudar"&&estCat!=="Todos"&&estCat!=="Sem categoria"){const rot=estSub==="Todos"?estCat:estCat+" › "+estSub,k=ESTUDO["tema:"+rot]||ESTUDO["tema:"+estCat];
     const n=[...salvos.values()].filter(o=>o.lista==="estudar"&&o.intencao&&o.est_cat===estCat&&(estSub==="Todos"||o.est_sub===estSub)).length;
     h=`<button class="tema-card" data-tema="${esc(ESTUDO["tema:"+rot]?rot:estCat)}"><b>Espaço do tema · ${esc(rot)}</b><span>${k?"O Claude cruza os estudos daqui: o que você já aprendeu, debates, lacunas e um plano único. Toque para abrir e conversar.":n<2?"Nasce quando houver 2 estudos com objetivo aqui. Aí o Claude cruza tudo num lugar só.":"O Claude está montando o espaço deste tema. Volte em alguns minutos."}</span></button>`+h}
-  if(modo==="estudar"){carregaDocs();h=(h.startsWith('<button class="tema-card"')?h.slice(0,h.indexOf("</button>")+9):"")+cardsEstudo(L)}
+  if(modo==="estudar"){carregaDocs();h=estCat==="Todos"?painelEstudo():(h.startsWith('<button class="tema-card"')?h.slice(0,h.indexOf("</button>")+9):"")+cardsEstudo(L)}
   if(modo==="estudar")h=`<button class="novo-est" id="novo-est" type="button"><b>+ Criar estudo do zero</b><span>Você escolhe o tema e o objetivo; o Claude pesquisa e monta o estudo.</span></button>`+h;
   $("feed").innerHTML=h||(modo==="depois"?`<div class="msg"><strong>Nada em Ver depois</strong>Toque no relógio ao lado de qualquer item para guardar e ver com calma. Não conta como visto e não some depois de 7 dias.</div>`:modo==="estudar"?`<div class="msg"><strong>Nada em Estudar</strong>Toque no capelo ao lado de um item que você viu, gostou e vai querer usar depois. Fica guardado aqui sem prazo.</div>`:`<div class="msg"><strong>Nada aqui</strong>Nenhum item ${fmt==="novos"?"novo ":""}nesse filtro.</div>`);
   if(ehLista()){$("end").hidden=false;$("end").innerHTML=L.length?`<span>${L.length} ${L.length===1?"item":"itens"} em ${NOME_L[modo]}. Toque no ícone de novo para tirar.</span>`:"";$("note").textContent="";renderStories();return}
@@ -936,36 +986,73 @@ function extrasEstudo(k,id){if(!k||k.startsWith("t_"))return"";if(EST_DOC[k]&&ES
 /* Estudar v2 (19/11/2026): cartões, tela do estudo com próximo passo, evolução e "Juntar a um estudo". Versão anterior em versoes/estudar_antes_v2_2026-11-19/ */
 const dmE=t=>t?new Date(t).toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"}):"";
 function cardsEstudo(L){
-  const ult=o=>{const d=EST_DOC[ESTUDO[o.id]]||{};return [o.salvoEm||"",d.quando||"",d.passo_t||"",...(d.conversa||[]).map(c=>c.t||"")].sort().pop()};
-  return [...L].sort((a,b)=>ult(b).localeCompare(ult(a))).map(o=>{const k=ESTUDO[o.id],d=EST_DOC[k]||{};
-    const ess=Array.isArray(d.essencia)?d.essencia[0]:(d.essencia||d.resumo||"");const pp=d.proximo_passo,sug=(VINC[k]||[]).filter(x=>x.status==="pendente").length,nc=(d.conversa||[]).length;
-    const st=!o.intencao?'<span class="tag-res and">falta seu objetivo</span>':!k?'<span class="tag-res and">o Claude está montando…</span>':"";
-    return `<button class="ec" data-id="${esc(o.id)}"><span class="ec-c">${esc(o.est_cat?estLab(o):"Sem categoria")} · ${dmE(ult(o))}${nc?` · ${nc} camada${nc>1?"s":""}`:""}</span><b>${esc(d.titulo||o.titulo)}</b>${st}${ess?`<span class="ec-e">${esc(String(ess).slice(0,180))}</span>`:""}${sug?`<span class="ec-s">${sug} conteúdo${sug>1?"s":""} do Radar para conferir</span>`:""}</button>`}).join("")}
+  return [...L].sort((a,b)=>ultEst(b).localeCompare(ultEst(a))).map(o=>cardEst(o)).join("")||`<p class="mut">Nenhum estudo nesta área.</p>`}
+const ultEst=o=>{const d=EST_DOC[ESTUDO[o.id]]||{};return [o.salvoEm||"",d.quando||"",...(d.conversa||[]).map(c=>c.t||"")].sort().pop()||""};
+function cardEst(o,cls){const k=ESTUDO[o.id],d=EST_DOC[k]||{};
+  const ess=Array.isArray(d.essencia)?d.essencia[0]:(d.essencia||d.resumo||"");const sug=(VINC[k]||[]).filter(x=>x.status==="pendente").length,nc=(d.conversa||[]).length;
+  const st=!o.intencao?'<span class="tag-res and">falta seu objetivo</span>':!k?'<span class="tag-res and">o Claude está montando…</span>':"";
+  return `<button class="ec${cls?" "+cls:""}" data-id="${esc(o.id)}"><span class="ec-c">${esc(o.est_cat?estLab(o):"Sem categoria")} · última camada ${dmE(ultEst(o))}</span><b>${esc(d.pergunta||d.titulo||o.titulo)}</b>${st}${ess?`<span class="ec-e">${esc(String(ess).slice(0,170))}</span>`:""}<span class="tg">${nc?`<span>${nc} camada${nc>1?"s":""}</span>`:""}${sug?`<span class="al">${sug} para conferir</span>`:""}</span></button>`}
+function painelEstudo(){
+  const sal=[...salvos.values()].filter(o=>o.lista==="estudar");const docs=sal.map(o=>EST_DOC[ESTUDO[o.id]]).filter(Boolean);
+  const sem7=new Date(Date.now()-7*864e5).toISOString(),cams=docs.flatMap(d=>d.conversa||[]);
+  const nSug=sal.reduce((n,o)=>n+((VINC[ESTUDO[o.id]]||[]).filter(x=>x.status==="pendente").length),0);
+  const nCam=cams.filter(c=>(c.t||"")>sem7).length,nMud=cams.filter(c=>c.mudou&&(c.t||"")>sem7).length;
+  const areas=new Map();for(const o of sal){const c=o.est_cat||"Sem categoria";areas.set(c,(areas.get(c)||0)+1)}
+  const sm=w=>{const d=new Date(w);d.setHours(0,0,0,0);d.setDate(d.getDate()-((d.getDay()+6)%7));return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+  const sems=[];for(let i=5;i>=0;i--){const d=new Date();d.setDate(d.getDate()-7*i);sems.push(sm(d))}
+  const tl=Object.fromEntries(sems.map(w=>[w,{v:0,a:0}]));for(const c of cams){const w=c.t&&sm(c.t);if(tl[w])tl[w][c.o==="auto"?"a":"v"]++}
+  for(const o of sal){const w=sm(o.salvoEm||o.quando||0);if(tl[w])tl[w].v++}
+  const mx=Math.max(1,...sems.map(w=>tl[w].v+tl[w].a));
+  const lim=new Date(Date.now()-14*864e5).toISOString(),ord=[...sal].sort((a,b)=>ultEst(b).localeCompare(ultEst(a)));
+  const mov=ord.filter(o=>ultEst(o)>=lim),par=ord.filter(o=>ultEst(o)<lim);
+  return `<div class="pe-k"><div><b>${sal.length}</b><span>estudos em ${areas.size} área${areas.size===1?"":"s"}</span></div><div class="${nSug?"al":""}"><b>${nSug}</b><span>conteúdos novos para conferir</span></div><div><b>${nCam}</b><span>camadas novas em 7 dias</span></div><div><b>${nMud}</b><span>respostas que mudaram em 7 dias</span></div></div>
+   <div class="pe-h">Atividade nas últimas 6 semanas</div>
+   <div class="pe-g"><div class="pe-gb">${sems.map(w=>{const t=tl[w];return `<div title="${t.v} suas · ${t.a} automáticas"><u class="ua" style="height:${100*t.a/mx}%"></u><u class="uv" style="height:${100*t.v/mx}%"></u><em>${w.slice(8,10)}/${w.slice(5,7)}</em></div>`}).join("")}</div>
+    <div class="pe-lg"><span><i style="background:var(--accent)"></i>suas (estudos e camadas)</span><span><i style="background:#8FB3F2"></i>automáticas</span></div></div>
+   <div class="pe-h">Por área</div><div class="pe-ar">${[...areas.entries()].sort((a,b)=>b[1]-a[1]).map(([c,n])=>`<button type="button" class="area" data-c="${esc(c)}"><b>${esc(c)}</b><span>${n} estudo${n>1?"s":""}</span></button>`).join("")}</div>
+   <div class="pe-h">Em movimento</div>${mov.length?mov.slice(0,6).map(o=>cardEst(o)).join(""):`<p class="mut">Nenhum estudo com atividade nos últimos 14 dias.</p>`}
+   ${par.length?`<div class="pe-h">Parados há mais de 14 dias</div>${par.map(o=>cardEst(o,"parado")).join("")}`:""}`}
 function maisEstudo(k){const outros=[...salvos.values()].filter(o=>o.lista==="estudar"&&ESTUDO[o.id]&&ESTUDO[o.id]!==k);
   return `<div class="est-x"><div class="est-h" style="margin-top:8px">Levar para</div><p class="mut">O Claude prepara um pacote para colar no chat ou projeto certo e aplicar lá.</p>
    <div class="cs">${DESTINOS.map(d=>`<button type="button" class="levar" data-d="${esc(d)}">${esc(d)}</button>`).join("")}<button type="button" class="levar" data-d="">Outro…</button></div>
    ${outros.length?`<div class="est-h" style="margin-top:14px">Debater com outro estudo</div><div class="cs">${outros.map(o=>`<button type="button" class="debate" data-k2="${ESTUDO[o.id]}">${esc(o.titulo.slice(0,48))}</button>`).join("")}</div>`:""}</div>`}
+let BL={inicial:false,perguntar:true,linha:true,novos:false};try{Object.assign(BL,JSON.parse(localStorage.getItem("radar-est-blocos")||"{}"))}catch(e){}
 function htmlEstudoV2(d){
-  const k=ESTUDO[(d.item||{}).id]||"";const F=d.fontes||[];const fonte=n=>{const f=F.find(x=>x.n===n);return f?`<a href="${escU(f.url)}" target="_blank" rel="noopener" class="fn">${n}</a>`:""};
+  const k=ESTUDO[(d.item||{}).id]||"";const o=EST_O||{};const F=d.fontes||[];const fonte=n=>{const f=F.find(x=>x.n===n);return f?`<a href="${escU(f.url)}" target="_blank" rel="noopener" class="fn">${n}</a>`:""};
   const cita=t=>esc(t).replace(/\[(\d+)\]/g,(m,n)=>fonte(+n)||m);
-  const ess=Array.isArray(d.essencia)?d.essencia:(d.essencia?[d.essencia]:[]);const pp=d.proximo_passo,conv=d.conversa||[],passos=d.passos||[];
-  const sug=(VINC[k]||[]).filter(x=>x.status==="pendente").slice(0,3),feitos=passos.filter(p=>p.st==="feito").length;
-  const resto=(d.secoes||[]).filter(x=>x.tipo!=="plano"),plano1=[...(d.plano_v1||[]),...(d.secoes||[]).filter(x=>x.tipo==="plano")];
-  const passoH=`<button type="button" class="pp-abre">Gerar um passo a passo</button><form class="est-form pp-form" id="pp-form" hidden><input id="pp-in" placeholder="Passo a passo para eu chegar a…" autocomplete="off"><button>Gerar</button></form>`;
-  return `<div class="est v2">
-   <div class="est-h">${esc(d.titulo||"Estudo")}</div>
-   ${ess.length?`<div class="est-ess"><small>Em 3 linhas</small><ul>${ess.map(x=>`<li>${cita(x)}</li>`).join("")}</ul></div>`:d.resumo?`<p class="est-tese">${cita(d.resumo)}</p>`:""}
-   <form class="est-form" id="est-form"><input id="est-in" placeholder="Pergunte, aprofunde ou conteste…" autocomplete="off"><button>Enviar</button></form>
-   <div class="est-perg">${(d.perguntas||[]).slice(0,3).map(p=>`<button class="est-sug">${esc(p)}</button>`).join("")}</div>
-   ${passoH}
+  const ess=Array.isArray(d.essencia)?d.essencia:(d.essencia?[d.essencia]:[]);const conv=d.conversa||[];
+  const sug=(VINC[k]||[]).filter(x=>x.status==="pendente"),resto=(d.secoes||[]).filter(x=>x.tipo!=="plano"),plano1=[...(d.plano_v1||[]),...(d.secoes||[]).filter(x=>x.tipo==="plano")];
+  const ab=b=>BL[b]?" open":"";
+  const pq=d.pergunta||d.titulo||"Estudo";
+  const tipoL=c=>c.tipo==="conteudo"?(c.o==="auto"?"automático · conteúdo do Radar":"você · conteúdo juntado"):c.tipo==="passo"?"você · passo a passo":c.tipo==="pergunta"?"você · pergunta principal":c.copiar?"você · pacote":"você · pergunta";
+  return `<div class="est v2 blocos">
+   <section class="bl-q"><div class="rot"><span>A pergunta</span><button type="button" class="pq-ajustar">Editar</button></div>
+    <h3>${esc(pq)}</h3>
+    ${d.pergunta&&!d.pergunta_ok?`<div class="prop">Proposta pelo Claude a partir do seu objetivo.<button type="button" class="pq-usar">Usar esta</button><button type="button" class="pq-ajustar">Ajustar</button></div>`:""}
+    <form class="est-form" id="pq-form" hidden><input id="pq-in" value="${esc(d.pergunta||"")}" autocomplete="off" aria-label="Pergunta principal"><button>Salvar</button></form>
+    ${ess.length?`<div class="bl-r"><small>Resposta de hoje${d.ess_t?" · atualizada em "+dmE(d.ess_t):""}</small><ul>${ess.map(x=>`<li>${cita(x)}</li>`).join("")}</ul></div>`:""}
+   </section>
    <div class="est-esp" id="est-esp" hidden>Claude pensando<span class="pts"></span></div>
-   ${sug.length?`<div class="sug"><small>O Radar achou, ligado a este estudo</small>${sug.map(x=>`<div class="vinc"><a href="${escU(x.url)}" target="_blank" rel="noopener"><b>${esc(x.titulo)}</b></a><span>${esc(x.nome)} · ${esc(x.motivo||"")}</span><div class="vinc-b"><button type="button" class="vsim" data-k="${k}" data-id="${esc(x.id)}">Juntar ao estudo</button><button type="button" class="vnao" data-k="${k}" data-id="${esc(x.id)}">Ignorar</button></div></div>`).join("")}</div>`:""}
-   <div class="evo-h">Evolução do estudo</div><div class="evo">
-    ${conv.slice().reverse().map(c=>`<div class="ev-i"><span class="ev-t">${dmE(c.t)}${c.mudou?" · atualizou o essencial":""}</span><b>${esc(c.p)}</b>${c.e?`<div class="est-qe">${mdr(cita(c.e))}</div>`:""}<details class="camada"><summary>${c.e?"Ver completo":"Ver resposta"}</summary><div>${mdr(cita(c.r))}</div></details>${c.copiar?`<button type="button" class="est-copia" data-txt="${esc(c.r)}">Copiar pacote</button>`:""}</div>`).join("")}
-    ${passos.length?`<div class="ev-i"><span class="ev-t">Passos tratados</span>${passos.slice().reverse().map(p=>`<div class="ev-p ${esc(p.st||"")}">${p.st==="feito"?"✓":"✕"} ${esc(p.acao||"")} <span class="mut">${dmE(p.t)}</span></div>`).join("")}</div>`:""}
-    <div class="ev-i"><span class="ev-t">${dmE(d.quando)} · estudo inicial</span><details class="camada"><summary>Ver o estudo completo${resto.length?" · "+resto.length+" partes":""}</summary>${ess.length&&d.resumo?`<p class="est-tese">${cita(d.resumo)}</p>`:""}${resto.map(x=>htmlSecao(x,fonte,cita)).join("")}${plano1.length?plano1.map(x=>htmlSecao({...x,titulo:"Plano da versão anterior"},fonte,cita)).join(""):""}</details></div>
-   </div>
-   <details class="camada mais"><summary>Mais: levar para outro lugar, debater${F.length?", "+F.length+" fontes":""}</summary>${k?maisEstudo(k):""}${F.length?`<div class="est-fontes">${F.map(f=>`<div><span class="fn">${f.n}</span> <a href="${escU(f.url)}" target="_blank" rel="noopener">${esc(f.titulo)}</a></div>`).join("")}</div>`:""}</details>
+   <details class="bl" data-b="inicial"${ab("inicial")}><summary><span><b>Estudo inicial</b><small>${dmE(d.quando)} · ${resto.length} parte${resto.length===1?"":"s"}${F.length?" · "+F.length+" fontes":""}</small></span></summary><div class="in">
+    <div class="est-obj"><small>Seu objetivo${o.est_cat?" · "+esc(estLab(o)):""}</small>${o.intencao?esc(o.intencao):"<i>ainda não escrito</i>"}<button class="est-edita">Editar objetivo e categoria</button></div>
+    ${d.resumo?`<p class="est-tese">${cita(d.resumo)}</p>`:""}${resto.map(x=>htmlSecao(x,fonte,cita)).join("")}${plano1.map(x=>htmlSecao({...x,titulo:"Plano da versão anterior"},fonte,cita)).join("")}
+    ${F.length?`<details class="est-fontes"><summary>${F.length} fontes</summary>${F.map(f=>`<div><span class="fn">${f.n}</span> <a href="${escU(f.url)}" target="_blank" rel="noopener">${esc(f.titulo)}</a></div>`).join("")}</details>`:""}</div></details>
+   <details class="bl" data-b="perguntar"${ab("perguntar")}><summary><span><b>Perguntar</b><small>Pergunta livre ou uma sugestão</small></span></summary><div class="in">
+    <form class="est-form" id="est-form"><input id="est-in" placeholder="Pergunte, aprofunde ou conteste…" autocomplete="off"><button>Enviar</button></form>
+    ${(d.perguntas||[]).length?`<p class="mut" style="font-size:12.5px;margin:10px 0 0">Sugestões: tocar só seleciona; envia no ✓</p>${d.perguntas.slice(0,3).map(p=>`<div class="sq"><button type="button" class="sug-q" aria-pressed="false">${esc(p)}</button><button type="button" class="sug-ok" hidden>Perguntar ✓</button></div>`).join("")}`:""}
+    <div class="bl-x"><button type="button" class="pp-abre">Gerar um passo a passo</button><button type="button" class="mais-abre">Levar para… / Debater</button></div>
+    <form class="est-form pp-form" id="pp-form" hidden><input id="pp-in" placeholder="Passo a passo para eu chegar a…" autocomplete="off"><button>Gerar</button></form>
+    <div id="mais-x" hidden>${k?maisEstudo(k):""}</div></div></details>
+   <details class="bl" data-b="linha"${ab("linha")}><summary><span><b>Linha do tempo</b><small>${conv.length} camada${conv.length===1?"":"s"} desde ${dmE(d.quando)}</small></span></summary><div class="in">
+    <div class="lt-lg"><span><i class="dv"></i>você</span><span><i class="da"></i>automático</span><span>◆ mudou a resposta</span></div>
+    <div class="lt">${conv.slice().reverse().map(c=>`<div class="lt-i${c.o==="auto"?" auto":""}" data-t="${esc(c.t||"")}"><span class="pt ${c.o==="auto"?"da":"dv"}"></span>
+      <div class="lt-h"><span>${dmE(c.t)}${c.t?" "+new Date(c.t).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}):""} · ${tipoL(c)}</span><button type="button" class="rm-x" aria-label="Remover esta camada">×</button></div>
+      <b>${c.url?`<a href="${escU(c.url)}" target="_blank" rel="noopener">${esc(c.p)}</a>`:esc(c.p)}</b>${c.e?`<div class="est-qe">${mdr(cita(c.e))}</div>`:""}
+      ${c.mudou?`<div class="lt-m">◆ mudou a resposta de hoje</div>`:""}
+      <details class="camada"><summary>${c.e?"Ver completo":"Ver"}</summary><div>${mdr(cita(c.r||""))}</div>${c.mudou&&(c.ess_antes||[]).length?`<p class="mut" style="font-size:12.5px">Resposta antes: ${esc(c.ess_antes.join(" · "))}</p>`:""}</details>${c.copiar?`<button type="button" class="est-copia" data-txt="${esc(c.r)}">Copiar pacote</button>`:""}</div>`).join("")}
+     <div class="lt-i"><span class="pt" style="background:var(--fg)"></span><div class="lt-h"><span>${dmE(d.quando)} · início do estudo</span></div><b>${o.livre||String((d.item||{}).id||"").startsWith("livre:")?"Você criou o estudo":"Você mandou o conteúdo"}; o Claude pesquisou${F.length?" "+F.length+" fontes":""}</b></div></div></div></details>
+   <details class="bl novos" data-b="novos"${sug.length?" open":ab("novos")}><summary><span><b>Novos conteúdos${sug.length?`<span class="cnt">${sug.length} para conferir</span>`:""}</b><small>O Radar procura de 6 em 6 horas o que responde à pergunta</small></span></summary><div class="in">
+    ${sug.length?sug.map(x=>`<div class="vinc"><a href="${escU(x.url)}" target="_blank" rel="noopener"><b>${esc(x.titulo)}</b></a><span>${esc(x.nome)} · ${esc(x.motivo||"")}</span><div class="vinc-b"><button type="button" class="vsim" data-k="${k}" data-id="${esc(x.id)}">Incorporar</button><button type="button" class="vnao" data-k="${k}" data-id="${esc(x.id)}">Ignorar</button></div></div>`).join(""):`<p class="mut">Nada novo agora. Quando chegar algo ligado à pergunta, aparece aqui; se for muito ligado, entra sozinho na linha do tempo, marcado como automático.</p>`}</div></details>
    <p class="rodape">Estudo feito pelo ${esc(d.modelo||"Claude")} com pesquisa na web.</p></div>`}
 function juntarHtml(i){const L=[...salvos.values()].filter(o=>o.lista==="estudar"&&ESTUDO[o.id]&&o.id!==i.id);if(!L.length)return"";
   return `<div class="acoes"><button type="button" class="sec juntar">Juntar a um estudo</button></div><div class="juntar-l" id="juntar" hidden><small>Escolha o estudo. O Claude aprofunda o estudo com este conteúdo.</small>${L.map(o=>`<button type="button" data-k="${ESTUDO[o.id]}">${esc((EST_DOC[ESTUDO[o.id]]||{}).titulo||o.titulo)}</button>`).join("")}</div>`}
@@ -1035,7 +1122,7 @@ async function mostraEstudo(i){
   if(!o.intencao&&k&&!verAntigo.has(i.id)){el.innerHTML=`<div class="est est-aviso"><div class="est-h">Antes de seguir</div><p>Reveja o ${i.vid?"vídeo":"conteúdo"} e diga o que você quer com este estudo. O Claude vai refazer o aprofundamento usando a sua resposta como norte.</p><div class="bt2"><button class="sec est-ver-antigo">Ver o estudo atual</button><button class="pri est-edita">Responder</button></div></div>`;return}
   if(!k){el.innerHTML=`${obj}<div class="est"><div class="est-h">Aprofundamento da IA</div><p class="mut">O Claude está pesquisando e montando o estudo a partir do seu objetivo. Leva alguns minutos; volte daqui a pouco.</p></div>`;return}
   try{const d=await leEstudo(k);if(d&&abertoId===i.id){const refaz=o.intencao&&(d.intencao||"")!==o.intencao;
-    el.innerHTML=obj+(refaz?`<div class="aviso">O Claude está refazendo o estudo com o seu objetivo. Leva alguns minutos; abaixo, a versão anterior.</div>`:"")+(EST_DOC[k]=d,htmlEstudo(d))+extrasEstudo(k,i.id);el.dataset.k=k;el.dataset.n=(d.conversa||[]).length}}catch(e){}
+    el.innerHTML=(d.secoes&&!String((d.item||{}).id||"").startsWith("tema:")?"":obj)+(refaz?`<div class="aviso">O Claude está refazendo o estudo com o seu objetivo. Leva alguns minutos; abaixo, a versão anterior.</div>`:"")+(EST_DOC[k]=d,htmlEstudo(d))+extrasEstudo(k,i.id);el.dataset.k=k;el.dataset.n=(d.conversa||[]).length}}catch(e){}
 }
 async function perguntaEstudo(p,corpo,tipo,pronto){
   const el=$("estudo");if(!el||!el.dataset.k||(!corpo&&!p.trim()))return;const k=el.dataset.k,n0=+el.dataset.n||0,id=abertoId;
@@ -1133,6 +1220,15 @@ async function vigiaFila(){
 $("sh-corpo").addEventListener("click",e=>{
   const bl=e.target.closest(".acoes .lista");
   if(bl){const i=itemAberto();if(!i)return;const l=bl.dataset.l;tem(l,i.id)?dessalvar(l,i.id):salvar(l,i);bl.setAttribute("aria-pressed",tem(l,i.id));return}
+  const sq=e.target.closest(".sug-q");if(sq){const on=sq.getAttribute("aria-pressed")!=="true";document.querySelectorAll(".sug-q").forEach(b=>{b.setAttribute("aria-pressed","false");b.nextElementSibling.hidden=true});if(on){sq.setAttribute("aria-pressed","true");sq.nextElementSibling.hidden=false}return}
+  const so=e.target.closest(".sug-ok");if(so){perguntaEstudo(so.previousElementSibling.textContent);return}
+  const rx=e.target.closest(".rm-x");if(rx){const it=rx.closest(".lt-i");rx.outerHTML=`<span class="rm-c">Remover? <button type="button" class="rm-sim">Sim</button><button type="button" class="rm-nao">Não</button></span>`;return}
+  const rn=e.target.closest(".rm-nao");if(rn){rn.closest(".rm-c").outerHTML=`<button type="button" class="rm-x" aria-label="Remover esta camada">×</button>`;return}
+  const rs=e.target.closest(".rm-sim");if(rs){const it=rs.closest(".lt-i"),t=it.dataset.t;it.style.opacity=".4";rs.closest(".rm-c").textContent="Removendo…";
+    perguntaEstudo("",k=>({remover:{k,t}}),"estudar_remover",d=>!(d.conversa||[]).some(c=>c.t===t));return}
+  if(e.target.closest(".pq-usar")){perguntaEstudo("",k=>({pergunta:{k}}),"estudar_pergunta_ok",d=>!!d.pergunta_ok);return}
+  if(e.target.closest(".pq-ajustar")){const f=$("pq-form");if(f){f.hidden=!f.hidden;if(!f.hidden)$("pq-in").focus()}return}
+  if(e.target.closest(".mais-abre")){const m=$("mais-x");if(m)m.hidden=!m.hidden;return}
   const sg=e.target.closest(".est-sug");if(sg){perguntaEstudo(sg.textContent);return}
   const pp=e.target.closest(".passo button");if(pp){const a=pp.dataset.p,el=$("estudo");if(!el||!el.dataset.k)return;ev("estudar_passo",abertoId,{s:a});
     if(a==="passoapasso"){perguntaEstudo("",k=>({passoapasso:{k}}),"estudar_passoapasso");return}
@@ -1172,7 +1268,9 @@ $("sh-corpo").addEventListener("click",e=>{
 let player=null, abertoId=null, velEscolhida=1;
 try{velEscolhida=parseFloat(localStorage.getItem("radar-vel"))||1}catch(e){}
 function setVel(v){try{player&&player.setPlaybackRate&&player.setPlaybackRate(v)}catch(e){}}
+$("sh-corpo").addEventListener("toggle",e=>{const b=e.target.closest&&e.target.closest("details.bl");if(b&&e.target===b){BL[b.dataset.b]=b.open;try{localStorage.setItem("radar-est-blocos",JSON.stringify(BL))}catch(x){}}},true);
 $("sh-corpo").addEventListener("submit",e=>{if(e.target.id==="est-form"){e.preventDefault();perguntaEstudo($("est-in").value)}
+  if(e.target.id==="pq-form"){e.preventDefault();const txt=$("pq-in").value.trim().slice(0,300);if(!txt)return;e.target.hidden=true;perguntaEstudo("",k=>({pergunta:{k,texto:txt}}),"estudar_pergunta_editou",d=>d.pergunta===txt);return}
   if(e.target.id==="pp-form"){e.preventDefault();const alvo=$("pp-in").value.trim().slice(0,300);if(!alvo)return;e.target.hidden=true;perguntaEstudo("",k=>({passoapasso:{k,alvo}}),"estudar_passoapasso")}});
 $("sh-corpo").addEventListener("scroll",()=>{const c=$("sh-corpo");if(c.scrollHeight>c.clientHeight)maxSc=Math.max(maxSc,(c.scrollTop+c.clientHeight)/c.scrollHeight)},{passive:true});
 $("sh-corpo").addEventListener("click",e=>{const b=e.target.closest("#vel button[data-v]");if(!b)return;velEscolhida=parseFloat(b.dataset.v);ev("vel",abertoId,{v:velEscolhida});try{localStorage.setItem("radar-vel",velEscolhida)}catch(x){}
