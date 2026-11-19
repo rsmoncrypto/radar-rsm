@@ -352,6 +352,7 @@ u.ue{background:var(--accent)}u.up{background:color-mix(in srgb,var(--accent) 45
 .passo small{display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
 .passo b{display:block;font-size:15.5px;line-height:1.35;margin:3px 0}.passo>span{display:block;font-size:13px;color:var(--muted)}
 .passo.vazio{border:1px dashed var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.pp-abre{font:inherit;font-size:13.5px;font-weight:600;border:1px dashed var(--line);background:none;color:var(--muted);border-radius:999px;padding:7px 12px;margin:10px 0 2px;cursor:pointer}.pp-form{margin-top:8px}
 .passo-b{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .passo button,.sug button,.juntar-l button{font:inherit;font-size:13.5px;font-weight:600;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:999px;padding:7px 12px;cursor:pointer}
 .passo-b button[data-p="feito"]{background:var(--accent);color:var(--bg);border-color:transparent}
@@ -476,7 +477,7 @@ u.ue{background:var(--accent)}u.up{background:color-mix(in srgb,var(--accent) 45
 </section>
 
 <script type="text/radar">
-const VERSAO = "1d5dc240b7";
+const VERSAO = "7124e0b646";
 /* se existir versão nova do app publicada, recarrega sem usar a cópia guardada */
 async function confereVersao(){
   try{const r=await fetch("versao.txt?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const v=(await r.text()).trim();
@@ -939,7 +940,7 @@ function cardsEstudo(L){
   return [...L].sort((a,b)=>ult(b).localeCompare(ult(a))).map(o=>{const k=ESTUDO[o.id],d=EST_DOC[k]||{};
     const ess=Array.isArray(d.essencia)?d.essencia[0]:(d.essencia||d.resumo||"");const pp=d.proximo_passo,sug=(VINC[k]||[]).filter(x=>x.status==="pendente").length,nc=(d.conversa||[]).length;
     const st=!o.intencao?'<span class="tag-res and">falta seu objetivo</span>':!k?'<span class="tag-res and">o Claude está montando…</span>':"";
-    return `<button class="ec" data-id="${esc(o.id)}"><span class="ec-c">${esc(o.est_cat?estLab(o):"Sem categoria")} · ${dmE(ult(o))}${nc?` · ${nc} camada${nc>1?"s":""}`:""}</span><b>${esc(d.titulo||o.titulo)}</b>${st}${ess?`<span class="ec-e">${esc(String(ess).slice(0,180))}</span>`:""}${pp?`<span class="ec-p">→ ${esc(String(pp.acao||"").slice(0,110))}${String(pp.acao||"").length>110?"…":""}</span>`:""}${sug?`<span class="ec-s">${sug} conteúdo${sug>1?"s":""} do Radar para conferir</span>`:""}</button>`}).join("")}
+    return `<button class="ec" data-id="${esc(o.id)}"><span class="ec-c">${esc(o.est_cat?estLab(o):"Sem categoria")} · ${dmE(ult(o))}${nc?` · ${nc} camada${nc>1?"s":""}`:""}</span><b>${esc(d.titulo||o.titulo)}</b>${st}${ess?`<span class="ec-e">${esc(String(ess).slice(0,180))}</span>`:""}${sug?`<span class="ec-s">${sug} conteúdo${sug>1?"s":""} do Radar para conferir</span>`:""}</button>`}).join("")}
 function maisEstudo(k){const outros=[...salvos.values()].filter(o=>o.lista==="estudar"&&ESTUDO[o.id]&&ESTUDO[o.id]!==k);
   return `<div class="est-x"><div class="est-h" style="margin-top:8px">Levar para</div><p class="mut">O Claude prepara um pacote para colar no chat ou projeto certo e aplicar lá.</p>
    <div class="cs">${DESTINOS.map(d=>`<button type="button" class="levar" data-d="${esc(d)}">${esc(d)}</button>`).join("")}<button type="button" class="levar" data-d="">Outro…</button></div>
@@ -950,16 +951,13 @@ function htmlEstudoV2(d){
   const ess=Array.isArray(d.essencia)?d.essencia:(d.essencia?[d.essencia]:[]);const pp=d.proximo_passo,conv=d.conversa||[],passos=d.passos||[];
   const sug=(VINC[k]||[]).filter(x=>x.status==="pendente").slice(0,3),feitos=passos.filter(p=>p.st==="feito").length;
   const resto=(d.secoes||[]).filter(x=>x.tipo!=="plano"),plano1=[...(d.plano_v1||[]),...(d.secoes||[]).filter(x=>x.tipo==="plano")];
-  const passoH=pp?`<div class="passo"><small>Próximo passo${pp.tempo?" · "+esc(pp.tempo):""}</small><b>${cita(pp.acao||"")}</b>${pp.por_que?`<span>${cita(pp.por_que)}</span>`:""}
-      <div class="passo-b"><button type="button" data-p="feito">✓ Fiz</button><button type="button" data-p="nao_serve">Não serve</button><button type="button" data-p="passoapasso">Passo a passo</button></div></div>`
-    :d.natureza==="aplicar"?`<div class="passo vazio"><span>${feitos?feitos+" passo"+(feitos>1?"s":"")+" feito"+(feitos>1?"s":"")+". ":""}Nenhum passo pendente.</span><button type="button" data-p="pedir">Sugerir o próximo</button></div>`
-    :d.v2?`<div class="passo vazio"><span>Estudo para entender, sem ação.</span><button type="button" data-p="pedir">Quero aplicar isto</button></div>`:"";
+  const passoH=`<button type="button" class="pp-abre">Gerar um passo a passo</button><form class="est-form pp-form" id="pp-form" hidden><input id="pp-in" placeholder="Passo a passo para eu chegar a…" autocomplete="off"><button>Gerar</button></form>`;
   return `<div class="est v2">
    <div class="est-h">${esc(d.titulo||"Estudo")}</div>
    ${ess.length?`<div class="est-ess"><small>Em 3 linhas</small><ul>${ess.map(x=>`<li>${cita(x)}</li>`).join("")}</ul></div>`:d.resumo?`<p class="est-tese">${cita(d.resumo)}</p>`:""}
-   ${passoH}
    <form class="est-form" id="est-form"><input id="est-in" placeholder="Pergunte, aprofunde ou conteste…" autocomplete="off"><button>Enviar</button></form>
    <div class="est-perg">${(d.perguntas||[]).slice(0,3).map(p=>`<button class="est-sug">${esc(p)}</button>`).join("")}</div>
+   ${passoH}
    <div class="est-esp" id="est-esp" hidden>Claude pensando<span class="pts"></span></div>
    ${sug.length?`<div class="sug"><small>O Radar achou, ligado a este estudo</small>${sug.map(x=>`<div class="vinc"><a href="${escU(x.url)}" target="_blank" rel="noopener"><b>${esc(x.titulo)}</b></a><span>${esc(x.nome)} · ${esc(x.motivo||"")}</span><div class="vinc-b"><button type="button" class="vsim" data-k="${k}" data-id="${esc(x.id)}">Juntar ao estudo</button><button type="button" class="vnao" data-k="${k}" data-id="${esc(x.id)}">Ignorar</button></div></div>`).join("")}</div>`:""}
    <div class="evo-h">Evolução do estudo</div><div class="evo">
@@ -1140,6 +1138,7 @@ $("sh-corpo").addEventListener("click",e=>{
     if(a==="passoapasso"){perguntaEstudo("",k=>({passoapasso:{k}}),"estudar_passoapasso");return}
     const t0=(EST_DOC[el.dataset.k]||{}).passo_t||"";const box=pp.closest(".passo");if(box)box.innerHTML=`<span>${a==="feito"?"Anotado ✓. ":a==="nao_serve"?"Anotado. ":""}O Claude está pensando no próximo passo…</span>`;
     perguntaEstudo("",k=>({passo:{k,st:a}}),"estudar_passo_"+a,d=>(d.passo_t||"")!==t0);return}
+  if(e.target.closest(".pp-abre")){const f=$("pp-form");if(f){f.hidden=!f.hidden;if(!f.hidden)$("pp-in").focus()}return}
   if(e.target.closest(".juntar")){const l=$("juntar");if(l){l.hidden=!l.hidden;if(!l.hidden)l.scrollIntoView({behavior:"smooth",block:"nearest"})}return}
   const jb=e.target.closest("#juntar button");if(jb){const i=itemAberto();if(!i)return;const k=jb.dataset.k;ev("estudar_juntar",i.id);
     fetch("https://ntfy.sh/"+TOPICO+"-q",{method:"POST",body:JSON.stringify({juntar:{k,item:{id:i.id,titulo:i.titulo,nome:i.nome,url:i.url,vid:i.vid||"",tipo:i.tipo||"",texto:String(i.texto||"").slice(0,1500)}}})}).catch(()=>{});
@@ -1173,7 +1172,8 @@ $("sh-corpo").addEventListener("click",e=>{
 let player=null, abertoId=null, velEscolhida=1;
 try{velEscolhida=parseFloat(localStorage.getItem("radar-vel"))||1}catch(e){}
 function setVel(v){try{player&&player.setPlaybackRate&&player.setPlaybackRate(v)}catch(e){}}
-$("sh-corpo").addEventListener("submit",e=>{if(e.target.id==="est-form"){e.preventDefault();perguntaEstudo($("est-in").value)}});
+$("sh-corpo").addEventListener("submit",e=>{if(e.target.id==="est-form"){e.preventDefault();perguntaEstudo($("est-in").value)}
+  if(e.target.id==="pp-form"){e.preventDefault();const alvo=$("pp-in").value.trim().slice(0,300);if(!alvo)return;e.target.hidden=true;perguntaEstudo("",k=>({passoapasso:{k,alvo}}),"estudar_passoapasso")}});
 $("sh-corpo").addEventListener("scroll",()=>{const c=$("sh-corpo");if(c.scrollHeight>c.clientHeight)maxSc=Math.max(maxSc,(c.scrollTop+c.clientHeight)/c.scrollHeight)},{passive:true});
 $("sh-corpo").addEventListener("click",e=>{const b=e.target.closest("#vel button[data-v]");if(!b)return;velEscolhida=parseFloat(b.dataset.v);ev("vel",abertoId,{v:velEscolhida});try{localStorage.setItem("radar-vel",velEscolhida)}catch(x){}
   document.querySelectorAll("#vel button[data-v]").forEach(x=>x.setAttribute("aria-pressed",x===b));setVel(velEscolhida)});
