@@ -343,6 +343,27 @@ u.ue{background:var(--accent)}u.up{background:color-mix(in srgb,var(--accent) 45
 .est-aviso p{font-size:15px;margin:4px 0}.est-aviso .bt2{display:flex;gap:8px;margin-top:12px}.est-aviso .bt2 button{flex:1;border:0;border-radius:10px;padding:12px;font:inherit;font-weight:600}
 .est-aviso .pri{background:var(--accent);color:#fff}.est-aviso .sec{background:var(--bg);color:var(--fg)}
 .rel .medias{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.rel .medias div{background:var(--chip);border-radius:12px;padding:10px 12px;min-width:0}.rel .medias b{display:block;font-size:20px;font-variant-numeric:tabular-nums}.rel .medias span{font-size:12px;color:var(--muted)}
+/* Estudar v2 (19/11/2026) */
+.ec{all:unset;box-sizing:border-box;display:block;width:100%;cursor:pointer;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:0 0 10px}
+.ec b{display:block;font-size:16px;line-height:1.3;margin:2px 0 4px}.ec-c{font-size:12px;color:var(--muted);font-weight:600}
+.ec-e{display:block;font-size:14px;color:var(--fg);opacity:.85;line-height:1.4}
+.ec-p{display:block;font-size:13.5px;color:var(--accent);font-weight:600;margin-top:6px}.ec-s{display:block;font-size:12.5px;color:var(--warn);margin-top:4px}
+.passo{background:var(--card);border:1.5px solid var(--accent);border-radius:12px;padding:11px 12px;margin:10px 0}
+.passo small{display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.passo b{display:block;font-size:15.5px;line-height:1.35;margin:3px 0}.passo>span{display:block;font-size:13px;color:var(--muted)}
+.passo.vazio{border:1px dashed var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.passo-b{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.passo button,.sug button,.juntar-l button{font:inherit;font-size:13.5px;font-weight:600;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:999px;padding:7px 12px;cursor:pointer}
+.passo-b button[data-p="feito"]{background:var(--accent);color:var(--bg);border-color:transparent}
+.sug{background:var(--warn-soft,var(--chip));border-radius:12px;padding:10px 12px;margin:12px 0}
+.sug small,.evo-h{display:block;font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.evo-h{margin:18px 0 6px}
+.evo{border-left:2px solid var(--line);margin-left:4px;padding-left:12px}
+.ev-i{position:relative;margin:0 0 12px}.ev-i::before{content:"";position:absolute;left:-18px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--chip);border:2px solid var(--accent)}
+.ev-t{display:block;font-size:12px;color:var(--muted);font-weight:600}.ev-i>b{display:block;font-size:14.5px;margin:2px 0}
+.ev-p{font-size:13.5px;margin:3px 0}.ev-p.nao_serve{color:var(--muted);text-decoration:line-through}
+.juntar-l{display:flex;flex-direction:column;gap:6px;margin:8px 0 12px}.juntar-l button{text-align:left;border-radius:10px}
+.juntar-l small{font-size:12.5px;color:var(--muted)}
 </style>
 <style>#boot{position:fixed;inset:0;z-index:99999;background:#FCFCFB;color:#1A1F1D;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;font:16px/1.4 -apple-system,system-ui,sans-serif;text-align:center;padding:24px}
 @media (prefers-color-scheme:dark){#boot{background:#1B201E;color:#C9D1CD}}
@@ -455,7 +476,7 @@ u.ue{background:var(--accent)}u.up{background:color-mix(in srgb,var(--accent) 45
 </section>
 
 <script type="text/radar">
-const VERSAO = "076ea2f724";
+const VERSAO = "1d5dc240b7";
 /* se existir versão nova do app publicada, recarrega sem usar a cópia guardada */
 async function confereVersao(){
   try{const r=await fetch("versao.txt?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const v=(await r.text()).trim();
@@ -741,7 +762,7 @@ let estVista="painel";try{estVista=localStorage.getItem("radar-est-vista")||"pai
 let carregandoDocs=false;
 async function carregaDocs(){if(carregandoDocs)return;carregandoDocs=true;let novo=false;
   for(const o of salvos.values()){if(o.lista!=="estudar")continue;const k=ESTUDO[o.id];if(!k||EST_DOC[k])continue;try{const d=await leEstudo(k);if(d){EST_DOC[k]=d;novo=true}}catch(e){}}
-  carregandoDocs=false;if(novo&&modo==="estudar"&&estVista==="painel")render()}
+  carregandoDocs=false;if(novo&&modo==="estudar")render()}
 function painelHtml(){
   const sal=[...salvos.values()].filter(o=>o.lista==="estudar");
   const acoes=[];let pnd=0,feit=0,adi=0;
@@ -837,8 +858,8 @@ function render(){
   if(modo==="estudar"&&estCat!=="Todos"&&estCat!=="Sem categoria"){const rot=estSub==="Todos"?estCat:estCat+" › "+estSub,k=ESTUDO["tema:"+rot]||ESTUDO["tema:"+estCat];
     const n=[...salvos.values()].filter(o=>o.lista==="estudar"&&o.intencao&&o.est_cat===estCat&&(estSub==="Todos"||o.est_sub===estSub)).length;
     h=`<button class="tema-card" data-tema="${esc(ESTUDO["tema:"+rot]?rot:estCat)}"><b>Espaço do tema · ${esc(rot)}</b><span>${k?"O Claude cruza os estudos daqui: o que você já aprendeu, debates, lacunas e um plano único. Toque para abrir e conversar.":n<2?"Nasce quando houver 2 estudos com objetivo aqui. Aí o Claude cruza tudo num lugar só.":"O Claude está montando o espaço deste tema. Volte em alguns minutos."}</span></button>`+h}
-  if(modo==="estudar"&&estVista==="painel"){carregaDocs();h=painelHtml()}
-  if(modo==="estudar")h=`<div class="vista" id="vista"><button type="button" data-v="painel" aria-pressed="${estVista==="painel"}">Painel</button><button type="button" data-v="lista" aria-pressed="${estVista==="lista"}">Lista</button></div><button class="novo-est" id="novo-est" type="button"><b>+ Criar estudo do zero</b><span>Você escolhe o tema e o objetivo; o Claude pesquisa e monta o estudo.</span></button>`+h;
+  if(modo==="estudar"){carregaDocs();h=(h.startsWith('<button class="tema-card"')?h.slice(0,h.indexOf("</button>")+9):"")+cardsEstudo(L)}
+  if(modo==="estudar")h=`<button class="novo-est" id="novo-est" type="button"><b>+ Criar estudo do zero</b><span>Você escolhe o tema e o objetivo; o Claude pesquisa e monta o estudo.</span></button>`+h;
   $("feed").innerHTML=h||(modo==="depois"?`<div class="msg"><strong>Nada em Ver depois</strong>Toque no relógio ao lado de qualquer item para guardar e ver com calma. Não conta como visto e não some depois de 7 dias.</div>`:modo==="estudar"?`<div class="msg"><strong>Nada em Estudar</strong>Toque no capelo ao lado de um item que você viu, gostou e vai querer usar depois. Fica guardado aqui sem prazo.</div>`:`<div class="msg"><strong>Nada aqui</strong>Nenhum item ${fmt==="novos"?"novo ":""}nesse filtro.</div>`);
   if(ehLista()){$("end").hidden=false;$("end").innerHTML=L.length?`<span>${L.length} ${L.length===1?"item":"itens"} em ${NOME_L[modo]}. Toque no ícone de novo para tirar.</span>`:"";$("note").textContent="";renderStories();return}
   const pend=L.filter(i=>!seen.has(i.id)).length, vistosAqui=L.length-pend;
@@ -897,7 +918,7 @@ async function carregaVinc(){try{const r=await fetch("estudar/vinculos.json?t="+
   const mudou=JSON.stringify(n)!==JSON.stringify(VINCI);VINCI=n;if(mudou&&modo!=="relatorio")render()}catch(e){}}
 /* Estudar 2 (11/11/2026): conteúdos do feed ligados ao estudo, debate entre estudos e "levar para" outro lugar do Claude */
 const DESTINOS=["Conselho RSM","CRM da RSM","Automações da RSM","Projeto Casa","Finanças pessoais e holding","Radar RSM"];
-function extrasEstudo(k,id){if(!k||k.startsWith("t_"))return"";
+function extrasEstudo(k,id){if(!k||k.startsWith("t_"))return"";if(EST_DOC[k]&&EST_DOC[k].secoes)return"";
   const vs=(VINC[k]||[]).filter(x=>x.status!=="nao");
   const outros=[...salvos.values()].filter(o=>o.lista==="estudar"&&ESTUDO[o.id]&&ESTUDO[o.id]!==k);
   const velho=!(EST_DOC[k]||{}).essencia;
@@ -911,6 +932,45 @@ function extrasEstudo(k,id){if(!k||k.startsWith("t_"))return"";
    ${outros.length?`<div class="est-h" style="margin-top:14px">Debater com outro estudo</div><p class="mut">O Claude confronta os dois e diz qual caminho faz mais sentido para você.</p>
    <div class="cs">${outros.map(o=>`<button type="button" class="debate" data-k2="${ESTUDO[o.id]}">${esc(o.titulo.slice(0,48))}</button>`).join("")}</div>`:""}
   </div>`}
+/* Estudar v2 (19/11/2026): cartões, tela do estudo com próximo passo, evolução e "Juntar a um estudo". Versão anterior em versoes/estudar_antes_v2_2026-11-19/ */
+const dmE=t=>t?new Date(t).toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"}):"";
+function cardsEstudo(L){
+  const ult=o=>{const d=EST_DOC[ESTUDO[o.id]]||{};return [o.salvoEm||"",d.quando||"",d.passo_t||"",...(d.conversa||[]).map(c=>c.t||"")].sort().pop()};
+  return [...L].sort((a,b)=>ult(b).localeCompare(ult(a))).map(o=>{const k=ESTUDO[o.id],d=EST_DOC[k]||{};
+    const ess=Array.isArray(d.essencia)?d.essencia[0]:(d.essencia||d.resumo||"");const pp=d.proximo_passo,sug=(VINC[k]||[]).filter(x=>x.status==="pendente").length,nc=(d.conversa||[]).length;
+    const st=!o.intencao?'<span class="tag-res and">falta seu objetivo</span>':!k?'<span class="tag-res and">o Claude está montando…</span>':"";
+    return `<button class="ec" data-id="${esc(o.id)}"><span class="ec-c">${esc(o.est_cat?estLab(o):"Sem categoria")} · ${dmE(ult(o))}${nc?` · ${nc} camada${nc>1?"s":""}`:""}</span><b>${esc(d.titulo||o.titulo)}</b>${st}${ess?`<span class="ec-e">${esc(String(ess).slice(0,180))}</span>`:""}${pp?`<span class="ec-p">→ ${esc(String(pp.acao||"").slice(0,110))}${String(pp.acao||"").length>110?"…":""}</span>`:""}${sug?`<span class="ec-s">${sug} conteúdo${sug>1?"s":""} do Radar para conferir</span>`:""}</button>`}).join("")}
+function maisEstudo(k){const outros=[...salvos.values()].filter(o=>o.lista==="estudar"&&ESTUDO[o.id]&&ESTUDO[o.id]!==k);
+  return `<div class="est-x"><div class="est-h" style="margin-top:8px">Levar para</div><p class="mut">O Claude prepara um pacote para colar no chat ou projeto certo e aplicar lá.</p>
+   <div class="cs">${DESTINOS.map(d=>`<button type="button" class="levar" data-d="${esc(d)}">${esc(d)}</button>`).join("")}<button type="button" class="levar" data-d="">Outro…</button></div>
+   ${outros.length?`<div class="est-h" style="margin-top:14px">Debater com outro estudo</div><div class="cs">${outros.map(o=>`<button type="button" class="debate" data-k2="${ESTUDO[o.id]}">${esc(o.titulo.slice(0,48))}</button>`).join("")}</div>`:""}</div>`}
+function htmlEstudoV2(d){
+  const k=ESTUDO[(d.item||{}).id]||"";const F=d.fontes||[];const fonte=n=>{const f=F.find(x=>x.n===n);return f?`<a href="${escU(f.url)}" target="_blank" rel="noopener" class="fn">${n}</a>`:""};
+  const cita=t=>esc(t).replace(/\[(\d+)\]/g,(m,n)=>fonte(+n)||m);
+  const ess=Array.isArray(d.essencia)?d.essencia:(d.essencia?[d.essencia]:[]);const pp=d.proximo_passo,conv=d.conversa||[],passos=d.passos||[];
+  const sug=(VINC[k]||[]).filter(x=>x.status==="pendente").slice(0,3),feitos=passos.filter(p=>p.st==="feito").length;
+  const resto=(d.secoes||[]).filter(x=>x.tipo!=="plano"),plano1=[...(d.plano_v1||[]),...(d.secoes||[]).filter(x=>x.tipo==="plano")];
+  const passoH=pp?`<div class="passo"><small>Próximo passo${pp.tempo?" · "+esc(pp.tempo):""}</small><b>${cita(pp.acao||"")}</b>${pp.por_que?`<span>${cita(pp.por_que)}</span>`:""}
+      <div class="passo-b"><button type="button" data-p="feito">✓ Fiz</button><button type="button" data-p="nao_serve">Não serve</button><button type="button" data-p="passoapasso">Passo a passo</button></div></div>`
+    :d.natureza==="aplicar"?`<div class="passo vazio"><span>${feitos?feitos+" passo"+(feitos>1?"s":"")+" feito"+(feitos>1?"s":"")+". ":""}Nenhum passo pendente.</span><button type="button" data-p="pedir">Sugerir o próximo</button></div>`
+    :d.v2?`<div class="passo vazio"><span>Estudo para entender, sem ação.</span><button type="button" data-p="pedir">Quero aplicar isto</button></div>`:"";
+  return `<div class="est v2">
+   <div class="est-h">${esc(d.titulo||"Estudo")}</div>
+   ${ess.length?`<div class="est-ess"><small>Em 3 linhas</small><ul>${ess.map(x=>`<li>${cita(x)}</li>`).join("")}</ul></div>`:d.resumo?`<p class="est-tese">${cita(d.resumo)}</p>`:""}
+   ${passoH}
+   <form class="est-form" id="est-form"><input id="est-in" placeholder="Pergunte, aprofunde ou conteste…" autocomplete="off"><button>Enviar</button></form>
+   <div class="est-perg">${(d.perguntas||[]).slice(0,3).map(p=>`<button class="est-sug">${esc(p)}</button>`).join("")}</div>
+   <div class="est-esp" id="est-esp" hidden>Claude pensando<span class="pts"></span></div>
+   ${sug.length?`<div class="sug"><small>O Radar achou, ligado a este estudo</small>${sug.map(x=>`<div class="vinc"><a href="${escU(x.url)}" target="_blank" rel="noopener"><b>${esc(x.titulo)}</b></a><span>${esc(x.nome)} · ${esc(x.motivo||"")}</span><div class="vinc-b"><button type="button" class="vsim" data-k="${k}" data-id="${esc(x.id)}">Juntar ao estudo</button><button type="button" class="vnao" data-k="${k}" data-id="${esc(x.id)}">Ignorar</button></div></div>`).join("")}</div>`:""}
+   <div class="evo-h">Evolução do estudo</div><div class="evo">
+    ${conv.slice().reverse().map(c=>`<div class="ev-i"><span class="ev-t">${dmE(c.t)}${c.mudou?" · atualizou o essencial":""}</span><b>${esc(c.p)}</b>${c.e?`<div class="est-qe">${mdr(cita(c.e))}</div>`:""}<details class="camada"><summary>${c.e?"Ver completo":"Ver resposta"}</summary><div>${mdr(cita(c.r))}</div></details>${c.copiar?`<button type="button" class="est-copia" data-txt="${esc(c.r)}">Copiar pacote</button>`:""}</div>`).join("")}
+    ${passos.length?`<div class="ev-i"><span class="ev-t">Passos tratados</span>${passos.slice().reverse().map(p=>`<div class="ev-p ${esc(p.st||"")}">${p.st==="feito"?"✓":"✕"} ${esc(p.acao||"")} <span class="mut">${dmE(p.t)}</span></div>`).join("")}</div>`:""}
+    <div class="ev-i"><span class="ev-t">${dmE(d.quando)} · estudo inicial</span><details class="camada"><summary>Ver o estudo completo${resto.length?" · "+resto.length+" partes":""}</summary>${ess.length&&d.resumo?`<p class="est-tese">${cita(d.resumo)}</p>`:""}${resto.map(x=>htmlSecao(x,fonte,cita)).join("")}${plano1.length?plano1.map(x=>htmlSecao({...x,titulo:"Plano da versão anterior"},fonte,cita)).join(""):""}</details></div>
+   </div>
+   <details class="camada mais"><summary>Mais: levar para outro lugar, debater${F.length?", "+F.length+" fontes":""}</summary>${k?maisEstudo(k):""}${F.length?`<div class="est-fontes">${F.map(f=>`<div><span class="fn">${f.n}</span> <a href="${escU(f.url)}" target="_blank" rel="noopener">${esc(f.titulo)}</a></div>`).join("")}</div>`:""}</details>
+   <p class="rodape">Estudo feito pelo ${esc(d.modelo||"Claude")} com pesquisa na web.</p></div>`}
+function juntarHtml(i){const L=[...salvos.values()].filter(o=>o.lista==="estudar"&&ESTUDO[o.id]&&o.id!==i.id);if(!L.length)return"";
+  return `<div class="acoes"><button type="button" class="sec juntar">Juntar a um estudo</button></div><div class="juntar-l" id="juntar" hidden><small>Escolha o estudo. O Claude aprofunda o estudo com este conteúdo.</small>${L.map(o=>`<button type="button" data-k="${ESTUDO[o.id]}">${esc((EST_DOC[ESTUDO[o.id]]||{}).titulo||o.titulo)}</button>`).join("")}</div>`}
 async function carregaEstudo(){try{const r=await fetch("estudar/index.json?t="+Date.now(),{cache:"no-store"});if(r.ok){const n=await r.json();const mudou=JSON.stringify(n)!==JSON.stringify(ESTUDO);ESTUDO=n;if(mudou&&modo==="estudar")render()}}catch(e){}carregaVinc()}
 async function leEstudo(k){const r=await fetch(`estudar/${k}.json?t=${Date.now()}`,{cache:"no-store"});return r.ok?await dec(r):null}
 function mdr(t){return t.split("\n").map(l=>{l=l.replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");let m;if(m=l.match(/^\s*#{1,4}\s+(.*)/))return `<b class="md-h">${m[1]}</b><br>`;if(m=l.match(/^\s*[-•*]\s+(.*)/))return `<div class="md-li">• ${m[1]}</div>`;if(m=l.match(/^\s*(\d+)[.)]\s+(.*)/))return `<div class="md-li">${m[1]}. ${m[2]}</div>`;return l.trim()?l+"<br>":"<br>"}).join("").replace(/(<br>){3,}/g,"<br><br>")}
@@ -930,6 +990,7 @@ function htmlSecao(x,fonte,cita){
   }
 }
 function htmlEstudo(d){
+  if(d.secoes&&!String((d.item||{}).id||"").startsWith("tema:"))return htmlEstudoV2(d);
   if(d.secoes){
     const F=d.fontes||[];const fonte=n=>{const f=F.find(x=>x.n===n);return f?`<a href="${escU(f.url)}" target="_blank" rel="noopener" class="fn">${n}</a>`:""};
     const cita=t=>esc(t).replace(/\[(\d+)\]/g,(m,n)=>fonte(+n)||m);
@@ -978,12 +1039,17 @@ async function mostraEstudo(i){
   try{const d=await leEstudo(k);if(d&&abertoId===i.id){const refaz=o.intencao&&(d.intencao||"")!==o.intencao;
     el.innerHTML=obj+(refaz?`<div class="aviso">O Claude está refazendo o estudo com o seu objetivo. Leva alguns minutos; abaixo, a versão anterior.</div>`:"")+(EST_DOC[k]=d,htmlEstudo(d))+extrasEstudo(k,i.id);el.dataset.k=k;el.dataset.n=(d.conversa||[]).length}}catch(e){}
 }
-async function perguntaEstudo(p,corpo,tipo){
+async function perguntaEstudo(p,corpo,tipo,pronto){
   const el=$("estudo");if(!el||!el.dataset.k||(!corpo&&!p.trim()))return;const k=el.dataset.k,n0=+el.dataset.n||0,id=abertoId;
+  if(pronto){ev(tipo,id);$("est-esp").hidden=false;$("est-esp").scrollIntoView({behavior:"smooth",block:"center"});
+    try{await fetch("https://ntfy.sh/"+TOPICO+"-q",{method:"POST",body:JSON.stringify(corpo(k))})}catch(e){}
+    for(let t=0;t<40;t++){await new Promise(r=>setTimeout(r,6000));if(abertoId!==id)return;
+      try{const d=await leEstudo(k);if(d&&pronto(d)){EST_DOC[k]=d;const i=itemAberto();if(i)mostraEstudo(i);return}}catch(e){}}
+    const esp=$("est-esp");if(esp)esp.textContent="O Mac não respondeu ainda. Tente de novo em alguns minutos.";return}
   ev(tipo||"estudar_pergunta",id);$("est-esp").hidden=false;$("est-in").value="";$("est-esp").scrollIntoView({behavior:"smooth",block:"center"});
   try{await fetch("https://ntfy.sh/"+TOPICO+"-q",{method:"POST",body:JSON.stringify(corpo?corpo(k):{k,p:p.slice(0,500)})})}catch(e){}
   for(let t=0;t<40;t++){await new Promise(r=>setTimeout(r,6000));if(abertoId!==id)return;
-    try{const d=await leEstudo(k);if(d&&(d.conversa||[]).length>n0){el.innerHTML=htmlEstudo(d)+extrasEstudo(k,id);el.dataset.k=k;el.dataset.n=d.conversa.length;el.querySelector(".est-q:last-of-type")?.scrollIntoView({behavior:"smooth",block:"center"});return}}catch(e){}}
+    try{const d=await leEstudo(k);if(d&&(d.conversa||[]).length>n0){EST_DOC[k]=d;const i=itemAberto();if(i)await mostraEstudo(i);(document.querySelector(".ev-i")||el).scrollIntoView({behavior:"smooth",block:"center"});return}}catch(e){}}
   const esp=$("est-esp");if(esp)esp.textContent="O Mac não respondeu ainda. Tente de novo em alguns minutos.";
 }
 async function carregaIndice(){try{const r=await fetch("resumos/index.json?t="+Date.now(),{cache:"no-store"});if(r.ok){const n=new Set(await r.json());const mudou=n.size!==RESUMOS.size||[...n].some(v=>!RESUMOS.has(v));RESUMOS=n;if(mudou)render()}}catch(e){}}
@@ -1070,6 +1136,15 @@ $("sh-corpo").addEventListener("click",e=>{
   const bl=e.target.closest(".acoes .lista");
   if(bl){const i=itemAberto();if(!i)return;const l=bl.dataset.l;tem(l,i.id)?dessalvar(l,i.id):salvar(l,i);bl.setAttribute("aria-pressed",tem(l,i.id));return}
   const sg=e.target.closest(".est-sug");if(sg){perguntaEstudo(sg.textContent);return}
+  const pp=e.target.closest(".passo button");if(pp){const a=pp.dataset.p,el=$("estudo");if(!el||!el.dataset.k)return;ev("estudar_passo",abertoId,{s:a});
+    if(a==="passoapasso"){perguntaEstudo("",k=>({passoapasso:{k}}),"estudar_passoapasso");return}
+    const t0=(EST_DOC[el.dataset.k]||{}).passo_t||"";const box=pp.closest(".passo");if(box)box.innerHTML=`<span>${a==="feito"?"Anotado ✓. ":a==="nao_serve"?"Anotado. ":""}O Claude está pensando no próximo passo…</span>`;
+    perguntaEstudo("",k=>({passo:{k,st:a}}),"estudar_passo_"+a,d=>(d.passo_t||"")!==t0);return}
+  if(e.target.closest(".juntar")){const l=$("juntar");if(l){l.hidden=!l.hidden;if(!l.hidden)l.scrollIntoView({behavior:"smooth",block:"nearest"})}return}
+  const jb=e.target.closest("#juntar button");if(jb){const i=itemAberto();if(!i)return;const k=jb.dataset.k;ev("estudar_juntar",i.id);
+    fetch("https://ntfy.sh/"+TOPICO+"-q",{method:"POST",body:JSON.stringify({juntar:{k,item:{id:i.id,titulo:i.titulo,nome:i.nome,url:i.url,vid:i.vid||"",tipo:i.tipo||"",texto:String(i.texto||"").slice(0,1500)}}})}).catch(()=>{});
+    VINC[k]=VINC[k]||[];if(!VINC[k].some(x=>x.id===i.id))VINC[k].unshift({id:i.id,titulo:i.titulo,nome:i.nome,url:i.url,motivo:"você juntou",status:"ok"});VINCI[i.id]=jb.textContent;
+    $("juntar").outerHTML=`<p class="mut">Juntado a <b>${esc(jb.textContent)}</b>. O Claude aprofunda o estudo em alguns minutos; aparece na Evolução do estudo.</p>`;return}
   const vb=e.target.closest(".vsim,.vnao");if(vb){const ok=vb.classList.contains("vsim"),k=vb.dataset.k,id=vb.dataset.id;const x=(VINC[k]||[]).find(y=>y.id===id);if(x)x.status=ok?"ok":"nao";
     ev("estudar_vinculo",id,{ok:ok?1:0});
     if(ok)perguntaEstudo("",()=>({vinc:{k,id,ok:true}}),"estudar_vinculo_ok");else{fetch("https://ntfy.sh/"+TOPICO+"-q",{method:"POST",body:JSON.stringify({vinc:{k,id,ok:false}})}).catch(()=>{});vb.closest(".vinc").remove()}
@@ -1135,6 +1210,7 @@ function abrir(i){
       <div class="acoes"><a class="pri" href="${escU(i.url)}" target="_blank" rel="noopener">${ehNoticia(i)?"Ler a matéria completa":"Abrir o original"}</a><button class="sec lista" data-l="depois" aria-pressed="${tem("depois",i.id)}">${ICON.depois}Ver depois</button><button class="sec lista" data-l="estudar" aria-pressed="${tem("estudar",i.id)}">${ICON.estudar}Estudar</button></div>
       ${votosHTML(i)}`;
   }
+  if(!String(i.id).startsWith("livre:"))c+=juntarHtml(i);
   if(tem("estudar",i.id))c=`<div id="estudo"></div>`+c;
   $("sh-corpo").innerHTML=c; $("sh-corpo").scrollTop=0;
   if(tem("estudar",i.id))mostraEstudo(i);
@@ -1173,6 +1249,7 @@ $("feed").addEventListener("click",e=>{
   const pe=e.target.closest(".pa-est");if(pe){const i=[...salvos.values()].find(o=>o.id===pe.dataset.id&&o.lista==="estudar");if(i)abrir({...i,...((DATA&&DATA.itens.find(x=>x.id===i.id))||{})});return}
   const ar=e.target.closest(".area");if(ar){estCat=ar.dataset.c;estSub="Todos";estVista="lista";render();return}
   if(e.target.closest("#novo-est")){abreEnvioEstudo({id:"livre:"+Date.now(),titulo:"",nome:"Estudo próprio",tipo:"Estudo",quando:new Date().toISOString(),livre:true});return}
+  const ecb=e.target.closest(".ec");if(ecb){const i=[...salvos.values()].find(o=>o.id===ecb.dataset.id&&o.lista==="estudar");if(i)abrir({...i,...((DATA&&DATA.itens.find(x=>x.id===i.id))||{})});return}
   if(arrastou){arrastou=false;return}
   const vt=e.target.closest(".voto");
   if(vt){const id=vt.dataset.id;lote=[];fica.add(id);
