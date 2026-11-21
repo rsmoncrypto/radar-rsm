@@ -550,7 +550,7 @@ details.bl.novos{border-color:var(--warn)}details.bl .cnt{font-size:12px;font-we
 </section>
 
 <script type="text/radar">
-const VERSAO = "901c2049bf";
+const VERSAO = "3013d18433";
 /* se existir versão nova do app publicada, recarrega sem usar a cópia guardada */
 async function confereVersao(){
   try{const r=await fetch("versao.txt?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const v=(await r.text()).trim();
@@ -1233,7 +1233,7 @@ async function vigiaFila(){
         const msgs=(await q.text()).split("\n").filter(Boolean).map(l=>{try{const m=JSON.parse(l);return m.event==="message"?JSON.parse(m.message):null}catch(e){return null}}).filter(Boolean);
         for(const [vid,f] of [...fila]){
           const m=msgs.filter(x=>x.vid===vid).pop();
-          if(m&&m.erro){fila.delete(vid);guardaFila();render();toast(`<span>Não deu para resumir <b>${esc(f.titulo)}</b>: ${esc(m.erro.slice(0,100))}</span><button class="fx">×</button>`);continue}
+          if(m&&m.erro){fila.delete(vid);guardaFila();render();toast(m.depois?`<span>O resumo de <b>${esc(f.titulo)}</b> vai demorar: ${esc(m.erro.slice(0,220))}</span><button class="fx">×</button>`:`<span>Não deu para resumir <b>${esc(f.titulo)}</b>: ${esc(m.erro.slice(0,160))}</span><button class="fx">×</button>`);continue}
           if(m&&m.r){resumoPronto(vid,m.r);continue}
           if(m&&m.pronto){resumoPronto(vid,null);continue}
           if(Date.now()/1000-f.ini>8*60){const r=await fetch(`resumos/${encodeURIComponent(vid)}.json?t=${Date.now()}`,{cache:"no-store"}).catch(()=>null);
